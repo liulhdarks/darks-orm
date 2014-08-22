@@ -3,9 +3,8 @@ package darks.orm.core.cache.thread;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.Queue;
-
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentMap;
 
 import darks.orm.core.cache.CacheKey;
@@ -13,11 +12,13 @@ import darks.orm.core.cache.CacheList;
 import darks.orm.core.cache.CacheObject;
 import darks.orm.core.data.xml.CacheConfigData;
 import darks.orm.core.session.SessionContext;
-import darks.orm.util.LogHelper;
+import darks.orm.log.Logger;
+import darks.orm.log.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class CacheCheckThread implements Runnable
 {
+    private static final Logger logger = LoggerFactory.getLogger(CacheCheckThread.class);
     
     private Queue<CacheKey> keysList;
     
@@ -46,7 +47,7 @@ public class CacheCheckThread implements Runnable
     {
         try
         {
-            LogHelper.println("The cache object check thread has been started.");
+            logger.debug("The cache object check thread has been started.");
             while (SessionContext.isInited())
             {
                 int num = 0;
@@ -62,11 +63,11 @@ public class CacheCheckThread implements Runnable
                     Object value = obj;
                     if (obj instanceof WeakReference)
                     {
-                        value = ((WeakReference)obj).get();
+                        value = ((WeakReference<Object>)obj).get();
                     }
                     else if (obj instanceof SoftReference)
                     {
-                        value = ((SoftReference)obj).get();
+                        value = ((SoftReference<Object>)obj).get();
                     }
                     if (value == null)
                     {

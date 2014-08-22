@@ -4,22 +4,22 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dom4j.Attribute;
+import org.dom4j.Element;
+
 import darks.orm.app.QueryEnumType;
 import darks.orm.core.aspect.jython.PythonBuilder;
 import darks.orm.core.data.xml.AspectData;
-import darks.orm.core.data.xml.DMLData;
-import darks.orm.core.data.xml.DMLQueryData;
-import darks.orm.core.data.xml.DMLUpdateData;
 import darks.orm.core.data.xml.AspectData.AspectType;
+import darks.orm.core.data.xml.DMLData;
 import darks.orm.core.data.xml.DMLData.DMLType;
+import darks.orm.core.data.xml.DMLQueryData;
 import darks.orm.core.data.xml.DMLQueryData.DMLQueryDataType;
+import darks.orm.core.data.xml.DMLUpdateData;
 import darks.orm.core.factory.TransformFactory;
 import darks.orm.exceptions.ConfigException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
-import org.dom4j.Attribute;
-import org.dom4j.Element;
 
 @SuppressWarnings("unchecked")
 public class DMLConfigReader
@@ -88,7 +88,7 @@ public class DMLConfigReader
                     Class<?> cls = TransformFactory.getInstance().stringToEntityClass(value);
                     if (cls == null)
                     {
-                        LogHelper.except(logger, value + " does not exists", ConfigException.class);
+                        throw new ConfigException(value + " does not exists");
                     }
                     queryData.setResultClass(cls);
                 }

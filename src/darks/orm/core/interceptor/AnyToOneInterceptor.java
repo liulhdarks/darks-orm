@@ -3,6 +3,9 @@ package darks.orm.core.interceptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import darks.orm.annotation.Column;
 import darks.orm.annotation.ManyToOne;
 import darks.orm.annotation.MappedType;
@@ -13,11 +16,7 @@ import darks.orm.core.factory.SqlSessionFactory;
 import darks.orm.exceptions.SessionException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 import darks.orm.util.ReflectHelper;
-
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 /**
  * BEAN方法拦截类 作者:DarkShadow 版权:归夜影所有 时间:2011-12-25 版本:1.0.0
@@ -156,8 +155,7 @@ public class AnyToOneInterceptor implements MethodInterceptor, Serializable
         SqlSession session = SqlSessionFactory.getSession();
         if (session == null)
         {
-            LogHelper.except(logger, "failed to create session", SessionException.class);
-            return null;
+            throw new SessionException("failed to create session");
         }
         ob = session.queryBySQL(c, sql, val);
         if (isOwn)

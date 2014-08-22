@@ -3,18 +3,13 @@ package darks.orm.app.factory;
 import java.util.List;
 
 import darks.orm.app.Page;
-import darks.orm.app.SqlSession;
 import darks.orm.app.QueryEnumType;
+import darks.orm.app.SqlSession;
 import darks.orm.core.factory.SqlMapSingletonFactory;
 import darks.orm.exceptions.SqlMapQueryException;
-import darks.orm.log.Logger;
-import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 
 public class GenericSqlMapFactory implements SqlMapFactory
 {
-    
-    private static Logger logger = LoggerFactory.getLogger(GenericSqlMapFactory.class);
     
     private SqlSession dao = null;
     
@@ -75,9 +70,7 @@ public class GenericSqlMapFactory implements SqlMapFactory
     {
         if (queryEnumType == QueryEnumType.Page || queryEnumType == QueryEnumType.Auto)
         {
-            LogHelper.except(logger,
-                "GenericSqlMapFactory::query queryEnumType can not use Page/Auto,please change to another query method with page/pageSize",
-                SqlMapQueryException.class);
+            throw new SqlMapQueryException("GenericSqlMapFactory::query queryEnumType can not use Page/Auto,please change to another query method with page/pageSize");
         }
         SqlMapSingletonFactory sqlmapFactory = SqlMapSingletonFactory.getInstance();
         return sqlmapFactory.query(dao, id, queryEnumType, 0, 0, values, params);

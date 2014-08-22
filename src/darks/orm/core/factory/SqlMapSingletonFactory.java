@@ -5,20 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import org.dom4j.DocumentException;
+
 import darks.orm.app.Page;
-import darks.orm.app.SqlSession;
 import darks.orm.app.QueryEnumType;
+import darks.orm.app.SqlSession;
 import darks.orm.core.config.Configuration;
 import darks.orm.core.config.sqlmap.SqlMapConfiguration;
 import darks.orm.core.data.xml.DDLData;
 import darks.orm.core.data.xml.DMLData;
+import darks.orm.core.data.xml.DMLData.DMLType;
 import darks.orm.core.data.xml.DMLQueryData;
+import darks.orm.core.data.xml.DMLQueryData.DMLQueryDataType;
 import darks.orm.core.data.xml.DMLUpdateData;
 import darks.orm.core.data.xml.InterfaceMethodData;
 import darks.orm.core.data.xml.QueryAspectWrapper;
 import darks.orm.core.data.xml.SimpleAspectWrapper;
-import darks.orm.core.data.xml.DMLData.DMLType;
-import darks.orm.core.data.xml.DMLQueryData.DMLQueryDataType;
 import darks.orm.core.executor.SqlMapExecutor;
 import darks.orm.core.session.SessionContext;
 import darks.orm.exceptions.ConfigException;
@@ -26,9 +28,7 @@ import darks.orm.exceptions.SqlMapQueryException;
 import darks.orm.exceptions.SqlMapUpdateException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 import darks.orm.util.SqlHelper;
-import org.dom4j.DocumentException;
 
 public class SqlMapSingletonFactory
 {
@@ -90,9 +90,7 @@ public class SqlMapSingletonFactory
         DMLData dmlData = null;
         if (id == null)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Update id is not allowed to be null",
-                SqlMapUpdateException.class);
+            throw new SqlMapUpdateException("SqlMapSingletonFactory::Update id is not allowed to be null");
         }
         else
         {
@@ -100,25 +98,21 @@ public class SqlMapSingletonFactory
         }
         if (dmlData == null)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Update the id ('" + id + "') does not exists",
-                SqlMapUpdateException.class);
+            throw new SqlMapUpdateException("Update the id ('" + id + "') does not exists");
         }
         if (dmlData != null && dmlData.getType() != DMLType.Update)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Update Type is not DMLType.Update",
-                SqlMapUpdateException.class);
+            throw new SqlMapUpdateException("Update Type is not DMLType.Update");
         }
         DMLUpdateData updateData = dmlData.getUpdateData();
         if (updateData == null)
         {
-            LogHelper.except(logger, "SqlMapSingletonFactory::Update updateData is null", SqlMapUpdateException.class);
+            throw new SqlMapUpdateException("Update updateData is null");
         }
         String sql = updateData.getSql();
         if (sql == null || "".equals(sql))
         {
-            LogHelper.except(logger, "SqlMapSingletonFactory::Update sql is null/empty", SqlMapUpdateException.class);
+            throw new SqlMapUpdateException("Update sql is null/empty");
         }
         boolean isClose = false;
         if (session == null)
@@ -178,9 +172,7 @@ public class SqlMapSingletonFactory
     {
         if (id == null)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Query id is not allowed to be null",
-                SqlMapQueryException.class);
+            throw new SqlMapQueryException("Query id is not allowed to be null");
         }
         DMLData dmlData = sqlMapConfig.getDMLData(id);
         return query(session, id, dmlData, queryEnumType, page, pageSize, values, params);
@@ -192,20 +184,16 @@ public class SqlMapSingletonFactory
     {
         if (dmlData == null)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Query the id ('" + id + "') does not exists",
-                SqlMapQueryException.class);
+            throw new SqlMapQueryException("Query the id ('" + id + "') does not exists");
         }
         if (dmlData.getType() != DMLType.Query)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Query Type is not DMLType.Query",
-                SqlMapQueryException.class);
+            throw new SqlMapQueryException("Query Type is not DMLType.Query");
         }
         DMLQueryData queryData = dmlData.getQueryData();
         if (queryData == null)
         {
-            LogHelper.except(logger, "SqlMapSingletonFactory::Query queryData is null", SqlMapQueryException.class);
+            throw new SqlMapQueryException("Query queryData is null");
         }
         QueryEnumType qtype = queryData.getQueryType();
         if (queryData.getQueryType() == QueryEnumType.Auto)
@@ -326,32 +314,26 @@ public class SqlMapSingletonFactory
     {
         if (id == null)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Query id is not allowed to be null",
-                SqlMapUpdateException.class);
+            throw new SqlMapQueryException("Query id is not allowed to be null");
         }
         DMLData dmlData = sqlMapConfig.getDMLData(id);
         if (dmlData == null)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Query the id ('" + id + "') does not exists",
-                SqlMapUpdateException.class);
+            throw new SqlMapQueryException("Query the id ('" + id + "') does not exists");
         }
         if (dmlData.getType() != DMLType.Query)
         {
-            LogHelper.except(logger,
-                "SqlMapSingletonFactory::Query Type is not DMLType.Query",
-                SqlMapQueryException.class);
+            throw new SqlMapQueryException("Query Type is not DMLType.Query");
         }
         DMLQueryData queryData = dmlData.getQueryData();
         if (queryData == null)
         {
-            LogHelper.except(logger, "SqlMapSingletonFactory::Query queryData is null", SqlMapQueryException.class);
+            throw new SqlMapQueryException("Query queryData is null");
         }
         String sql = queryData.getSql(values);
         if (sql == null)
         {
-            LogHelper.except(logger, "[SQLMAP]sql does not exists", SqlMapQueryException.class);
+            throw new SqlMapQueryException("sql does not exists");
         }
         String attr = queryData.getAttribute();
         String alias = queryData.getAlias();

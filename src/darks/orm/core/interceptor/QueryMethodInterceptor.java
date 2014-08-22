@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import darks.orm.annotation.Query;
 import darks.orm.annotation.Query.QueryType;
 import darks.orm.app.SqlSession;
@@ -14,10 +16,7 @@ import darks.orm.core.factory.SqlSessionFactory;
 import darks.orm.exceptions.ClassReflectException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 import darks.orm.util.StringHelper;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 /**
  * BEAN方法拦截类 作者:DarkShadow 版权:归夜影所有 时间:2011-12-25 版本:1.0.0
@@ -104,9 +103,7 @@ public class QueryMethodInterceptor implements MethodInterceptor, Serializable
                 Method mt = cobj.getMethod(mtName);
                 if (mt == null)
                 {
-                    LogHelper.except(logger,
-                        "There is no method named '" + mtName + "' in class '" + cobj + "'",
-                        ClassReflectException.class);
+                    throw new ClassReflectException("There is no method named '" + mtName + "' in class '" + cobj + "'");
                 }
                 Object val = mt.invoke(obj);
                 newargs.add(val);

@@ -15,7 +15,8 @@ import darks.orm.core.cache.thread.CacheAsynchronousThread;
 import darks.orm.core.data.EntityData;
 import darks.orm.core.factory.ClassFactory;
 import darks.orm.core.session.SessionContext;
-import darks.orm.util.LogHelper;
+import darks.orm.log.Logger;
+import darks.orm.log.LoggerFactory;
 import darks.orm.util.ThreadHelper;
 
 /**
@@ -25,6 +26,8 @@ import darks.orm.util.ThreadHelper;
 @SuppressWarnings("unchecked")
 public class CacheContext
 {
+    
+    private static Logger log = LoggerFactory.getLogger(CacheContext.class);
     
     public static final String SCOPE_APPLICATION = "application";
     
@@ -336,7 +339,7 @@ public class CacheContext
         {
             cacheFactory.flush();
         }
-        LogHelper.println(this, "Cache Flush");
+        log.debug("Cache Flush");
     }
     
     public boolean isSynchronous()

@@ -6,14 +6,9 @@ import darks.orm.app.Page;
 import darks.orm.app.QueryEnumType;
 import darks.orm.core.factory.SqlMapSingletonFactory;
 import darks.orm.exceptions.SqlMapQueryException;
-import darks.orm.log.Logger;
-import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 
 public class StaticSqlMapFactory
 {
-    
-    private static final Logger logger = LoggerFactory.getLogger(StaticSqlMapFactory.class);
     
     /**
      * Ö´ÐÐDDLÓï¾ä
@@ -67,8 +62,8 @@ public class StaticSqlMapFactory
     {
         if (queryEnumType == QueryEnumType.Page || queryEnumType == QueryEnumType.Auto)
         {
-            LogHelper.except(logger, "StaticSqlMapFactory::query queryEnumType can not use Page/Auto,"
-                + "please change to another query method with page/pageSize", SqlMapQueryException.class);
+            throw new SqlMapQueryException("StaticSqlMapFactory::query queryEnumType can not use Page/Auto,"
+                + "please change to another query method with page/pageSize");
         }
         
         SqlMapSingletonFactory sqlmapFactory = SqlMapSingletonFactory.getInstance();

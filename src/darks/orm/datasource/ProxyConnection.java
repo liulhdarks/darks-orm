@@ -42,8 +42,9 @@ import darks.orm.core.config.ResultSetConfig;
 import darks.orm.datasource.factory.ConnectionFactory;
 import darks.orm.datasource.factory.StatementFactory;
 import darks.orm.datasource.factory.StatementFactory.StatementType;
+import darks.orm.log.Logger;
+import darks.orm.log.LoggerFactory;
 import darks.orm.util.JdbcHelper;
-import darks.orm.util.LogHelper;
 
 /**
  * JDBC database connection proxy class
@@ -59,6 +60,8 @@ import darks.orm.util.LogHelper;
  */
 public class ProxyConnection implements Connection
 {
+    
+    private static Logger logger = LoggerFactory.getLogger(ProxyConnection.class);
     
     /**
      * Jdbc connnection object
@@ -130,8 +133,7 @@ public class ProxyConnection implements Connection
         stmtFactory.close();
         if (conn != null)
         {
-            LogHelper.println("[Thread ID:" + Thread.currentThread().getId() + " NAME:"
-                + Thread.currentThread().getName() + "]Connection Closed");
+            logger.debug("Connection Closed");
             conn.close();
             conn = null;
         }

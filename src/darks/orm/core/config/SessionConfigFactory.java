@@ -16,18 +16,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
 import darks.orm.core.config.CacheConfiguration.CacheConfigType;
 import darks.orm.exceptions.ClassReflectException;
 import darks.orm.exceptions.ConfigException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.FileHelper;
-import darks.orm.util.LogHelper;
 import darks.orm.util.ReflectHelper;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
 public final class SessionConfigFactory
 {
@@ -64,13 +65,11 @@ public final class SessionConfigFactory
         URL url = SessionConfigFactory.class.getResource(DEFAULT_CONFIG_PATH);
         if (url == null)
         {
-            LogHelper.except(logger,
-                "'" + DEFAULT_CONFIG_PATH + "' configuration file does not exists.",
-                ConfigException.class);
+            throw new ConfigException("'" + DEFAULT_CONFIG_PATH + "' configuration file does not exists.");
         }
         else
         {
-            LogHelper.println("Load '" + DEFAULT_CONFIG_PATH + "' configure file ['" + url.toString() + "']");
+            logger.debug("Load '" + DEFAULT_CONFIG_PATH + "' configure file ['" + url.toString() + "']");
         }
         String path = url.getFile();
         path = path.replace("%20", " ");
@@ -109,9 +108,7 @@ public final class SessionConfigFactory
         }
         catch (DocumentException e)
         {
-            LogHelper.except(logger,
-                "fail to read document'" + configPath + "' configuration file.",
-                ConfigException.class);
+            throw new ConfigException("fail to read document'" + configPath + "' configuration file.");
         }
         return cfg;
     }
@@ -152,7 +149,7 @@ public final class SessionConfigFactory
         Class<?> clazz = null;
         if (node == null)
         {
-            LogHelper.except(logger, "document does not has 'dataSource' node.", ConfigException.class);
+            throw new ConfigException("document does not has 'dataSource' node.");
         }
         String type = node.attributeValue("type");
         if (configMap.containsKey(type))
@@ -210,11 +207,11 @@ public final class SessionConfigFactory
         }
         catch (NoSuchFieldException e)
         {
-            LogHelper.except(logger, e.toString(), ConfigException.class);
+            throw new ConfigException(e.getMessage(), e);
         }
         catch (ClassReflectException e)
         {
-            LogHelper.except(logger, e.toString(), ConfigException.class);
+            throw new ConfigException(e.getMessage(), e);
         }
     }
     

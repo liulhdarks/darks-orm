@@ -19,8 +19,13 @@
 
 package darks.orm.core.session;
 
-import java.io.*;
-import java.sql.*;
+import java.io.Serializable;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +33,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import darks.orm.annotation.Id.GenerateKeyType;
 import darks.orm.annotation.Id.FeedBackKeyType;
+import darks.orm.annotation.Id.GenerateKeyType;
 import darks.orm.app.Page;
 import darks.orm.app.SqlSession;
 import darks.orm.core.cache.CacheContext;
@@ -39,16 +44,14 @@ import darks.orm.core.factory.ClassFactory;
 import darks.orm.core.factory.TransformFactory;
 import darks.orm.datasource.Transaction;
 import darks.orm.datasource.factory.ConnectionFactory;
-import darks.orm.datasource.factory.TransactionFactory;
 import darks.orm.datasource.factory.StatementFactory.StatementType;
+import darks.orm.datasource.factory.TransactionFactory;
 import darks.orm.exceptions.PersistenceException;
 import darks.orm.exceptions.SessionException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-
 import darks.orm.util.DataTypeHelper;
 import darks.orm.util.JdbcHelper;
-import darks.orm.util.LogHelper;
 import darks.orm.util.ReflectHelper;
 
 /**
@@ -175,7 +178,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         catch (SQLException e)
         {
-            LogHelper.except(logger, SessionException.class, e);
+            throw new SessionException(e.getMessage(), e);
         }
         finally
         {
@@ -198,7 +201,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
     public ResultSet executeQuery(String sql, Object param[], StatementType stateType)
         throws SessionException
     {
-        LogHelper.SqlLog(sql);
+        logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         
         initialize();
@@ -248,13 +251,12 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, SessionException.class, e);
+            throw new SessionException(e.getMessage(), e);
         }
         finally
         {
             JdbcHelper.closeResultSet(rs);
         }
-        return null;
     }
     
     /**
@@ -267,14 +269,13 @@ public abstract class SessionSupport implements Serializable, SqlSession
             initialize();
             if (rs == null)
                 return null;
-            LogHelper.SqlLog(sql);
+            logger.debug("[SQL]" + sql);
             return TransformFactory.getInstance().ResultToList(c, sql, rs);
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, SessionException.class, e);
+            throw new SessionException(e.getMessage(), e);
         }
-        return null;
     }
     
     /**
@@ -309,13 +310,12 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, SessionException.class, e);
+            throw new SessionException(e.getMessage(), e);
         }
         finally
         {
             JdbcHelper.closeResultSet(rs);
         }
-        return null;
     }
     
     /**
@@ -350,13 +350,12 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, SessionException.class, e);
+            throw new SessionException(e.getMessage(), e);
         }
         finally
         {
             JdbcHelper.closeResultSet(rs);
         }
-        return null;
     }
     
     /**
@@ -404,13 +403,12 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, SessionException.class, e);
+            throw new SessionException(e.getMessage(), e);
         }
         finally
         {
             JdbcHelper.closeResultSet(rs);
         }
-        return null;
     }
     
     /**
@@ -484,14 +482,14 @@ public abstract class SessionSupport implements Serializable, SqlSession
         initialize();
         if (rs == null)
             return null;
-        LogHelper.SqlLog(sql);
+        logger.debug("[SQL]" + sql);
         try
         {
             return TransformFactory.getInstance().ResultToBean(c, sql, rs, true);
         }
         catch (Exception e)
         {
-            throw new SessionException("SessionSupport::queryBySQL " + e.toString(), e);
+            throw new SessionException("queryBySQL " + e.toString(), e);
         }
     }
     
@@ -569,7 +567,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         Class<T> c = null;
         if (entity == null)
         {
-            LogHelper.except(logger, "the entity saved is null", PersistenceException.class);
+            throw new PersistenceException("the entity saved is null");
         }
         else
         {
@@ -658,7 +656,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         Class<T> c = null;
         if (entity == null)
         {
-            LogHelper.except(logger, "SessionSupport::update entity is null", PersistenceException.class);
+            throw new PersistenceException("update entity is null");
         }
         else
         {
@@ -678,7 +676,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, "SessionSupport::update exception " + e.toString(), PersistenceException.class);
+            throw new PersistenceException("update exception " + e.toString());
         }
     }
     
@@ -690,7 +688,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         Class<?> c = null;
         if (entity == null)
         {
-            LogHelper.except(logger, "SessionSupport::delete entity is null", PersistenceException.class);
+            throw new PersistenceException("delete entity is null");
         }
         else
         {
@@ -727,7 +725,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
     public int executeUpdate(String sql, Object... params)
     {
         initialize();
-        LogHelper.SqlLog(sql);
+        logger.debug("[SQL]" + sql);
         int Count = -1;
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
@@ -786,7 +784,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
     public Object executeUpdateGeneratedKey(String sql, Object... params)
     {
         initialize();
-        LogHelper.SqlLog(sql);
+        logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
         try
@@ -864,7 +862,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         throws SessionException
     {
         initialize();
-        LogHelper.SqlLog(sql);
+        logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
         try
@@ -938,7 +936,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         throws SessionException
     {
         initialize();
-        LogHelper.SqlLog(sql);
+        logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
         try

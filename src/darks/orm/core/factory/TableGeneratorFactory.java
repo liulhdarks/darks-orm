@@ -16,7 +16,6 @@ import darks.orm.datasource.factory.ConnectionFactory;
 import darks.orm.exceptions.DataSourceException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 
 public class TableGeneratorFactory
 {
@@ -67,7 +66,7 @@ public class TableGeneratorFactory
             conn = ConnectionFactory.getInstance().getConnection();
             if (conn == null)
             {
-                LogHelper.except(logger, "the connection is null", DataSourceException.class);
+                throw new DataSourceException("the connection is null");
             }
             else
             {
@@ -99,7 +98,7 @@ public class TableGeneratorFactory
                     String sql = ddlData.getSql();
                     if (sql == null || "".equals(sql))
                         continue;
-                    LogHelper.SqlLog(sql);
+                    logger.debug("[SQL]" + sql);
                     stmt.addBatch(sql);
                 }
                 stmt.executeBatch();
@@ -130,12 +129,11 @@ public class TableGeneratorFactory
                 if (conn != null)
                     conn.close();
                 Thread thread = Thread.currentThread();
-                LogHelper.println("[Thread " + thread.getId() + " NAME:" + thread.getName()
-                    + "]TableGeneratorFactory merge table close connection");
+                logger.debug("TableGeneratorFactory merge table close connection");
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
         return true;

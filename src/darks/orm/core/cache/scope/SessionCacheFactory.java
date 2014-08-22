@@ -13,12 +13,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.servlet.http.HttpSession;
 
 import net.sf.ehcache.CacheException;
-
+import darks.orm.core.cache.CacheContext.CacheKeyType;
 import darks.orm.core.cache.CacheController;
 import darks.orm.core.cache.CacheKey;
 import darks.orm.core.cache.CacheList;
 import darks.orm.core.cache.CacheObject;
-import darks.orm.core.cache.CacheContext.CacheKeyType;
 import darks.orm.core.cache.control.CacheControllerFactroy;
 import darks.orm.core.cache.strategy.CopyStrategy;
 import darks.orm.core.config.CacheConfiguration;
@@ -30,7 +29,6 @@ import darks.orm.core.session.SessionContext;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.ByteHelper;
-import darks.orm.util.LogHelper;
 import darks.orm.web.context.RequestContext;
 
 @SuppressWarnings("unchecked")
@@ -123,9 +121,7 @@ public class SessionCacheFactory implements CacheFactory
                 List list = (List)obj;
                 if (list.size() > sessionConfigData.getMaxObject())
                 {
-                    LogHelper.except(logger,
-                        "the size of list cacheing is flowover the max limit",
-                        CacheException.class);
+                    throw new CacheException("the size of list cacheing is flowover the max limit");
                 }
                 FieldData pkfdata = data.getPkField();
                 Map<CacheKey, Object> map = new ConcurrentHashMap<CacheKey, Object>();
@@ -152,7 +148,7 @@ public class SessionCacheFactory implements CacheFactory
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, CacheException.class, e);
+            throw new CacheException(e.getMessage(), e);
         }
         finally
         {

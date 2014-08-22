@@ -8,15 +8,14 @@ import darks.orm.annotation.Entity;
 import darks.orm.annotation.Id.GenerateKeyType;
 import darks.orm.core.data.EntityData;
 import darks.orm.core.data.FieldData;
-import darks.orm.core.data.PrimaryKeyData;
 import darks.orm.core.data.FieldData.FieldFlag;
+import darks.orm.core.data.PrimaryKeyData;
 import darks.orm.core.factory.ClassFactory;
 import darks.orm.exceptions.PersistenceException;
 import darks.orm.exceptions.SessionException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.DataTypeHelper;
-import darks.orm.util.LogHelper;
 
 /**
  * BEAN支持类 作者:DarkShadow 版权:归夜影所有 时间:2011-11-10 版本:1.0.0
@@ -216,9 +215,7 @@ public abstract class PersistSqlBuilder
         String pk = ClassFactory.getPrimaryKeyName(c);
         if (pk == null)
         {
-            LogHelper.except(logger,
-                "delete '" + c.getName() + "' does not has primary key",
-                PersistenceException.class);
+            throw new PersistenceException("delete '" + c.getName() + "' does not has primary key");
         }
         
         buf.append("delete from ");
@@ -251,7 +248,7 @@ public abstract class PersistSqlBuilder
         String pk = ClassFactory.getPrimaryKeyName(c);
         if (pk == null)
         {
-            LogHelper.except(logger, "get '" + c.getName() + "' does not has primary key", PersistenceException.class);
+            throw new PersistenceException("get '" + c.getName() + "' does not has primary key");
         }
         
         buf.append("select ");

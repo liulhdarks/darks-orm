@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
+
 import darks.orm.core.config.DataSourceConfiguration;
 import darks.orm.datasource.ConnectionHandler;
 import darks.orm.exceptions.DataSourceException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 
 public class BoneCPConnectionFactory extends ConnectionHandler
 {
@@ -26,8 +26,7 @@ public class BoneCPConnectionFactory extends ConnectionHandler
     public Connection getBoneCPConnection()
         throws DataSourceException, SQLException, ClassNotFoundException
     {
-        LogHelper.println(this, "[Thread ID:" + Thread.currentThread().getId() + " NAME:"
-            + Thread.currentThread().getName() + "]Get BoneCP Connection");
+        logger.debug("Get BoneCP Connection");
         Connection conn = null;
         DataSourceConfiguration config = this.getDataSourceConfig();
         DataSource ds = config.getDataSource();
@@ -51,9 +50,7 @@ public class BoneCPConnectionFactory extends ConnectionHandler
             Connection conn = getBoneCPConnection();
             if (conn == null)
             {
-                LogHelper.except(logger,
-                    "BoneCPConnectionFactory::getConnection connection is null",
-                    DataSourceException.class);
+                throw new DataSourceException("getConnection connection is null");
             }
             return conn;
         }

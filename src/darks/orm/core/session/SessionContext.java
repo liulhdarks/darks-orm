@@ -22,19 +22,19 @@ package darks.orm.core.session;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import darks.orm.core.cache.CacheContext;
 import darks.orm.core.config.CacheConfiguration;
+import darks.orm.core.config.CacheConfiguration.CacheConfigType;
 import darks.orm.core.config.Configuration;
 import darks.orm.core.config.DataSourceConfiguration;
 import darks.orm.core.config.EntityConfiguration;
 import darks.orm.core.config.SessionConfigFactory;
-import darks.orm.core.config.CacheConfiguration.CacheConfigType;
 import darks.orm.core.factory.ClassFactory;
 import darks.orm.core.factory.SqlMapSingletonFactory;
 import darks.orm.exceptions.SessionException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 import darks.orm.util.ThreadHelper;
 
 /**
@@ -147,7 +147,7 @@ public class SessionContext
         }
         catch (ClassNotFoundException e)
         {
-            LogHelper.except(logger, "ClassFactory parse entitys configuration error.", SessionException.class, e);
+            throw new SessionException("ClassFactory parse entitys configuration error.");
         }
         SqlMapSingletonFactory.getInstance().executeDDLMap();
         if (config.getCacheConfig().isUseCache())

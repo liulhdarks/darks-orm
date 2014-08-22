@@ -2,14 +2,16 @@ package darks.orm.core.interceptor;
 
 import java.lang.reflect.Method;
 
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import darks.orm.annotation.sqlmap.Query;
 import darks.orm.annotation.sqlmap.Update;
 import darks.orm.app.QueryEnumType;
 import darks.orm.app.SqlSession;
 import darks.orm.core.data.xml.DMLData;
+import darks.orm.core.data.xml.DMLData.DMLType;
 import darks.orm.core.data.xml.DMLQueryData;
 import darks.orm.core.data.xml.InterfaceMethodData;
-import darks.orm.core.data.xml.DMLData.DMLType;
 import darks.orm.core.executor.SqlMapExecutor;
 import darks.orm.core.factory.ClassFactory;
 import darks.orm.core.factory.ExecutorFactory;
@@ -17,11 +19,7 @@ import darks.orm.core.factory.SqlMapSingletonFactory;
 import darks.orm.exceptions.SqlMapQueryException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.LogHelper;
 import darks.orm.util.SqlHelper;
-
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 @SuppressWarnings("unchecked")
 public class SqlMapInterceptor implements MethodInterceptor
@@ -165,9 +163,7 @@ public class SqlMapInterceptor implements MethodInterceptor
         {
             if (data.getPageIndex() < 0 || data.getPageSizeIndex() < 0)
             {
-                LogHelper.except(logger,
-                    "('" + namesp + "') the index of page or pageSize is less than 0",
-                    SqlMapQueryException.class);
+                throw new SqlMapQueryException("('" + namesp + "') the index of page or pageSize is less than 0");
             }
         }
         int page = -1;

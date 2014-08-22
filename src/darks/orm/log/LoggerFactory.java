@@ -10,8 +10,8 @@
 package darks.orm.log;
 
 import java.lang.reflect.Constructor;
+
 import darks.orm.exceptions.LogException;
-import darks.orm.util.LogHelper;
 
 public class LoggerFactory
 {
@@ -54,7 +54,7 @@ public class LoggerFactory
                 Class<?> implClass = Class.forName(className);
                 Constructor<?> candidate = implClass.getConstructor(new Class[] {String.class});
                 candidate.newInstance(new Object[] {LoggerFactory.class.getName()});
-                LogHelper.println("Logging initialized using '" + className + "' adapter.");
+                System.out.println("Logging initialized using '" + className + "' adapter.");
                 logConstructor = (Constructor<? extends Logger>)candidate;
             }
             catch (Exception e)

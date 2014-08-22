@@ -9,12 +9,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import net.sf.ehcache.CacheException;
-
+import darks.orm.core.cache.CacheContext.CacheKeyType;
 import darks.orm.core.cache.CacheController;
 import darks.orm.core.cache.CacheKey;
 import darks.orm.core.cache.CacheList;
 import darks.orm.core.cache.CacheObject;
-import darks.orm.core.cache.CacheContext.CacheKeyType;
 import darks.orm.core.cache.control.CacheControllerFactroy;
 import darks.orm.core.cache.strategy.CopyStrategy;
 import darks.orm.core.config.CacheConfiguration;
@@ -26,14 +25,12 @@ import darks.orm.core.session.SessionContext;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.ByteHelper;
-import darks.orm.util.LogHelper;
 import darks.orm.util.ThreadHelper;
 
 /**
  * 类名:ThreadCacheFactory 作者:刘力华 创建时间:2012.02.15 版本:1.0.3 alpha
  * 版权:CopyRight(c)2012 刘力华 该项目工程所有权归刘力华所有 描述:线程级范围缓存工厂
  */
-@SuppressWarnings("unchecked")
 public class ThreadCacheFactory implements CacheFactory
 {
     
@@ -123,9 +120,7 @@ public class ThreadCacheFactory implements CacheFactory
                 List list = (List)obj;
                 if (list.size() > threadConfigData.getMaxObject())
                 {
-                    LogHelper.except(logger,
-                        "the size of list cacheing is flowover the max limit",
-                        CacheException.class);
+                    throw new CacheException("the size of list cacheing is flowover the max limit");
                 }
                 FieldData pkfdata = data.getPkField();
                 Map<CacheKey, Object> map = new ConcurrentHashMap<CacheKey, Object>();
@@ -152,7 +147,7 @@ public class ThreadCacheFactory implements CacheFactory
         }
         catch (Exception e)
         {
-            LogHelper.except(logger, CacheException.class, e);
+            throw new CacheException(e.getMessage(), e);
         }
     }
     
