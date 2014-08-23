@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<darks  xmlns="http://www.darks.org/schema/darks"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.darks.org/schema/darks darks.xsd">
+	
+	<!-- 配置JDBC数据源 -->
+    <dataSource type="jdbc" id="jdbc" main="true">
+    	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+    	<property name="url" value="jdbc:mysql://localhost:3306/usermgr"></property>
+    	<property name="username" value="root"></property>
+    	<property name="password" value="1234"></property>
+    	<property name="fetchSize" value="0"></property>
+    	<property name="autoCommit" value="true"></property>
+    	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+    </dataSource>
+
+	<!-- 配置Bonecp数据源 -->
+    <dataSource type="bonecp" id="bonecp" chainref="jdbc">
+    	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+    	<property name="url" value="jdbc:mysql://localhost:3306/usermgr"></property>
+    	<property name="username" value="root"></property>
+    	<property name="password" value="1234"></property>
+    	<property name="fetchSize" value="0"></property>
+    	<property name="autoCommit" value="true"></property>
+    	<property name="idleConnectionTestPeriod" value="60"></property>
+    	<property name="idleMaxAge" value="240"></property>
+    	<property name="partitionCount" value="3"></property>
+    	<property name="maxConnectionsPerPartition" value="20"></property>
+    	<property name="minConnectionsPerPartition" value="5"></property>
+    	<property name="acquireIncrement" value="5"></property>
+    	<property name="releaseHelperThreads" value="3"></property>
+    	<property name="statementsCacheSize" value="20"></property>
+    	<property name="statementReleaseHelperThreads" value="3"></property>
+    	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+    </dataSource>
+    
+    <!-- 配置Jndi数据源, 主数据源 -->
+    <dataSource type="jndi" id="jndi" chainref="bonecp">
+    	<property name="fetchSize" value="0"></property>
+    	<property name="autoCommit" value="true"></property>
+    	<property name="jndiPoolName" value="java:comp/env/jdbc/course"></property>
+    	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+    </dataSource>
+ 	
+ 	<!-- 日志配置 -->
+    <logger>
+    	<!-- 控制台显示执行的SQL语句 -->
+    	<showSql>true</showSql>
+    	<!-- 显示日志输出 -->
+    	<showLog>true</showLog>
+    	<!-- 将日志写入文件 -->
+    	<writeLog>false</writeLog>
+    </logger>
+    
+    <useThreadLocal use="true"></useThreadLocal>
+    
+    <!-- 实体类配置 -->
+    <entitys>
+		<entity alias="User" class="darks.orm.test.model.User"></entity>
+		<entity alias="Depart" class="darks.orm.test.model.Depart"></entity>
+	</entitys>
+	
+	<!-- 缓存配置  -->
+	<cacheGroup use="false" type="auto" cacheId="application" synchronous="true">
+		<!-- 应用级缓存配置 -->
+		<appCache strategy="Lru" 
+				  maxObject="50"
+				  eternal="true"
+				  idleTime="500"
+				  liveTime="500"
+				  entirety="true"
+				  copyStrategy="serial"/>
+		<!-- 线程级缓存配置 -->
+		<threadCache  strategy="Lru" 
+					  maxObject="50"
+					  entirety="true"
+					  copyStrategy="serial"/>
+		<!-- EhCache缓存配置 -->
+		<ehCache id="ehcache1"
+				 maxElementsInMemory="10000"
+				 eternal="false"
+				 timeToIdleSeconds="0"
+				 timeToLiveSeconds="0"
+				 overflowToDisk="false"
+				 maxElementsOnDisk="10000000"
+	             diskPersistent="false"
+	             diskExpiryThreadIntervalSeconds="120"
+	             memoryStoreEvictionPolicy="LRU"/>
+		
+	</cacheGroup>
+	
+	<sqlMapGroup>
+		<!-- <sqlMap>/sqlmap-*.xml</sqlMap>
+		<sqlMap>/sqlmap-user.xml</sqlMap> -->
+	</sqlMapGroup>
+	
+	
+</darks>

@@ -31,10 +31,6 @@ import darks.orm.log.LoggerFactory;
 import darks.orm.util.ByteHelper;
 import darks.orm.util.ThreadHelper;
 
-/**
- * 类名:ApplicationCacheFactory 作者:刘力华 创建时间:2012.02.15 版本:1.0.3 alpha
- * 版权:CopyRight(c)2012 刘力华 该项目工程所有权归刘力华所有 描述:应用级范围缓存工厂
- */
 public class ApplicationCacheFactory implements CacheFactory
 {
     
