@@ -201,6 +201,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
     public ResultSet executeQuery(String sql, Object param[], StatementType stateType)
         throws SessionException
     {
+        sql = sql.toLowerCase();
         logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         
@@ -725,6 +726,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
     public int executeUpdate(String sql, Object... params)
     {
         initialize();
+        sql = sql.toLowerCase();
         logger.debug("[SQL]" + sql);
         int Count = -1;
         PreparedStatement pstmt = null;
@@ -784,6 +786,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
     public Object executeUpdateGeneratedKey(String sql, Object... params)
     {
         initialize();
+        sql = sql.toLowerCase();
         logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
@@ -862,6 +865,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         throws SessionException
     {
         initialize();
+        sql = sql.toLowerCase();
         logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
@@ -936,6 +940,7 @@ public abstract class SessionSupport implements Serializable, SqlSession
         throws SessionException
     {
         initialize();
+        sql = sql.toLowerCase();
         logger.debug("[SQL]" + sql);
         PreparedStatement pstmt = null;
         boolean isAutoCommit = tx.isAutoCommit();
