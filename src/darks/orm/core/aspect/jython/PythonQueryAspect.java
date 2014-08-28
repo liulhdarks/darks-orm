@@ -45,7 +45,7 @@ public class PythonQueryAspect extends QueryAspectAdapter
         if (PluginHelper.isRegJythonPlugin())
         {
             PythonParser parser = getPythonParser();
-            return parser.parse(aspectData, queryWrapper, queryEnumType, PythonBuilder.JY_ESPECT_BEFORE);
+            return parser.parse(aspectData, queryWrapper, queryEnumType, PythonBuilder.JY_ASPECT_BEFORE);
         }
         return true;
     }
@@ -60,7 +60,7 @@ public class PythonQueryAspect extends QueryAspectAdapter
         if (PluginHelper.isRegJythonPlugin())
         {
             PythonParser parser = getPythonParser();
-            return parser.parse(aspectData, queryWrapper, queryEnumType, PythonBuilder.JY_ESPECT_AFTER);
+            return parser.parse(aspectData, queryWrapper, queryEnumType, PythonBuilder.JY_ASPECT_AFTER);
         }
         return true;
     }

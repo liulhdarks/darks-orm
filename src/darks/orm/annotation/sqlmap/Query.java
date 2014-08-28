@@ -98,6 +98,21 @@ public @interface Query
     String alias() default "";
     
     /**
+     * The values string for select and constitude
+     */
+    String values() default "";
+    
+    /**
+     * The values string for select and constitude
+     */
+    String page() default "";
+    
+    /**
+     * The values string for select and constitude
+     */
+    String pageSize() default "";
+    
+    /**
      * If true, It will automatically use the global cache, if the global cache
      * is enabled in the configuration file.If not, It need to manually
      * configure the caching in the group cache id.

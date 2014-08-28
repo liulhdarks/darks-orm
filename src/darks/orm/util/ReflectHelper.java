@@ -621,6 +621,27 @@ public final class ReflectHelper
         return result;
     }
     
+    public static Object getFieldValue(Field field, Object target)
+    {
+    	boolean isAccess = field.isAccessible();
+        if (!isAccess)
+            field.setAccessible(true);
+    	try
+		{
+            return field.get(target);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+    	finally
+    	{
+            if (!isAccess)
+                field.setAccessible(isAccess);
+    	}
+    }
+    
     private static void getAllFields(List<Field> fields, Class<?> clazz)
     {
         if (Object.class.equals(clazz))

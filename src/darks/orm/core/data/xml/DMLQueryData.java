@@ -21,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import darks.orm.app.QueryEnumType;
+import darks.orm.core.data.tags.RootTag;
+import darks.orm.util.StringHelper.ParamFlag;
 
-@SuppressWarnings("unchecked")
 public class DMLQueryData implements Cloneable
 {
     
@@ -45,7 +46,7 @@ public class DMLQueryData implements Cloneable
     
     private String resultType;
     
-    private Class resultClass;
+    private Class<?> resultClass;
     
     private boolean autoCascade;
     
@@ -58,6 +59,14 @@ public class DMLQueryData implements Cloneable
     private DMLQueryDataType queryDataType;
     
     private AspectData aspectData;
+    
+    private RootTag sqlTag;
+    
+    private ParamFlag valuesParam;
+    
+    private ParamFlag pageParam;
+    
+    private ParamFlag pageSizeParam;
     
     public DMLQueryData()
     {
@@ -299,12 +308,12 @@ public class DMLQueryData implements Cloneable
         this.queryDataType = queryDataType;
     }
     
-    public Class getResultClass()
+    public Class<?> getResultClass()
     {
         return resultClass;
     }
     
-    public void setResultClass(Class resultClass)
+    public void setResultClass(Class<?> resultClass)
     {
         this.resultClass = resultClass;
     }
@@ -319,7 +328,48 @@ public class DMLQueryData implements Cloneable
         this.aspectData = aspectData;
     }
     
-    public DMLQueryData clone()
+    public RootTag getSqlTag()
+	{
+		return sqlTag;
+	}
+
+	public void setSqlTag(RootTag sqlTag)
+	{
+		this.sqlTag = sqlTag;
+	}
+	
+
+	public ParamFlag getValuesParam()
+	{
+		return valuesParam;
+	}
+
+	public void setValuesParam(ParamFlag valuesParam)
+	{
+		this.valuesParam = valuesParam;
+	}
+
+	public ParamFlag getPageParam()
+	{
+		return pageParam;
+	}
+
+	public void setPageParam(ParamFlag pageParam)
+	{
+		this.pageParam = pageParam;
+	}
+
+	public ParamFlag getPageSizeParam()
+	{
+		return pageSizeParam;
+	}
+
+	public void setPageSizeParam(ParamFlag pageSizeParam)
+	{
+		this.pageSizeParam = pageSizeParam;
+	}
+
+	public DMLQueryData clone()
     {
         try
         {

@@ -17,26 +17,34 @@
 
 package darks.orm.core.data.xml;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import darks.orm.annotation.Param;
+import darks.orm.annotation.sqlmap.Query;
+import darks.orm.annotation.sqlmap.Query.QueryType;
+import darks.orm.annotation.sqlmap.Update;
 import darks.orm.app.QueryEnumType;
+import darks.orm.exceptions.SessionException;
+import darks.orm.util.StringHelper;
+import darks.orm.util.StringHelper.ParamFlag;
 
-@SuppressWarnings("unchecked")
 public class InterfaceMethodData
 {
+	
+	public static final String PAGE_PARAM_KEY = "@PAGE$";
+	
+	public static final String PAGESIZE_PARAM_KEY = "@PAGESIZE$";
+	
+	public static final String VALUES_PARAM_KEY = "@VALUES$";
     
     private String namespace;
     
-    private int pageIndex = -1;
-    
-    private int pageSizeIndex = -1;
-    
-    private int valuesIndex = -1;
-    
     private String sql;
     
-    private Class resultClass;
+    private Class<?> resultClass;
     
     private QueryEnumType queryEnumType;
     
@@ -57,21 +65,105 @@ public class InterfaceMethodData
         argumentsMap = new HashMap<String, Integer>();
     }
     
-    public InterfaceMethodData(String namespace, int pageIndex, int pageSizeIndex, int valuesIndex, String sql,
-        Class resultClass, String cacheId, String attribute, String alias, boolean autoCache, boolean autoCascade)
+    public InterfaceMethodData(Query query, Update update, Method method)
     {
         argumentsMap = new HashMap<String, Integer>();
-        this.namespace = namespace;
-        this.pageIndex = pageIndex;
-        this.pageSizeIndex = pageSizeIndex;
-        this.valuesIndex = valuesIndex;
-        this.sql = sql;
-        this.resultClass = resultClass;
-        this.cacheId = cacheId;
-        this.attribute = attribute;
-        this.alias = alias;
-        this.autoCache = autoCache;
-        this.autoCascade = autoCascade;
+    	autoCache = true;
+        autoCascade = true;
+        parseMethodParam(method);
+        if (query != null)
+        {
+        	parseQuery(query);
+        }
+        else if (update != null)
+        {
+            sql = update.SQL();
+        }
+    }
+    
+    private void parseQuery(Query query)
+    {
+    	sql = query.SQL();
+        resultClass = query.resultType();
+        cacheId = query.cacheId();
+        attribute = query.attribute();
+        alias = query.alias();
+        autoCache = query.autoCache();
+        autoCascade = query.autoCascade();
+        if (resultClass == null)
+        {
+        	throw new SessionException("Query result class is null");
+        }
+        QueryType queryType = query.queryType();
+        if (queryType == QueryType.SingleType)
+        {
+        	queryEnumType = QueryEnumType.Object;
+        }
+        else if (queryType == QueryType.PageType)
+        {
+        	queryEnumType = QueryEnumType.Page;
+        }
+        else
+        {
+        	queryEnumType = QueryEnumType.List;
+        }
+        String valuesName = query.values();
+        String pageName = query.page();
+        String pageSizeName = query.pageSize();
+        addExternArgument(valuesName, VALUES_PARAM_KEY);
+        addExternArgument(pageName, PAGE_PARAM_KEY);
+        addExternArgument(pageSizeName, PAGESIZE_PARAM_KEY);
+    }
+    
+    public int addExternArgument(String argName, String key)
+    {
+        ParamFlag param = StringHelper.parseParamFlag(argName);
+        int index = addExternArgument(param, key);
+		if (index < 0)
+		{
+			throw new SessionException("Invalid sqlmap query param tag's value " + param.name);
+		}
+		return index;
+    }
+    
+    public int addExternArgument(ParamFlag param, String key)
+    {
+    	int index = -1;
+        if (param != null)
+        {
+        	index = param.index;
+        	if (param.type == ParamFlag.TYPE_NAME || param.index < 0)
+        	{
+        		index = getArgumentIndex(param.name);
+        	}
+    		if (index >= 0)
+    		{
+            	addArgument(index, key);
+    		}
+        }
+        return index;
+    }
+    
+    private void parseMethodParam(Method method)
+    {
+    	try
+		{
+			for (int i = 0; i < method.getParameterTypes().length; i++)
+			{
+				if (method.getParameterAnnotations()[i].length == 0)
+					continue;
+				Annotation ap = method.getParameterAnnotations()[i][0];
+				if (ap.annotationType().equals(Param.class))
+				{
+					Param param = (Param) ap;
+					addArgument(i, param.value());
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			throw new SessionException(e.getMessage(), e);
+		}
     }
     
     public int getArgumentIndex(String argName)
@@ -91,36 +183,6 @@ public class InterfaceMethodData
     public Map<String, Integer> getArgumentsMap()
     {
         return argumentsMap;
-    }
-    
-    public int getPageIndex()
-    {
-        return pageIndex;
-    }
-    
-    public void setPageIndex(int pageIndex)
-    {
-        this.pageIndex = pageIndex;
-    }
-    
-    public int getPageSizeIndex()
-    {
-        return pageSizeIndex;
-    }
-    
-    public void setPageSizeIndex(int pageSizeIndex)
-    {
-        this.pageSizeIndex = pageSizeIndex;
-    }
-    
-    public int getValuesIndex()
-    {
-        return valuesIndex;
-    }
-    
-    public void setValuesIndex(int valuesIndex)
-    {
-        this.valuesIndex = valuesIndex;
     }
     
     public String getNamespace()
@@ -143,12 +205,12 @@ public class InterfaceMethodData
         this.sql = sql;
     }
     
-    public Class getResultClass()
+    public Class<?> getResultClass()
     {
         return resultClass;
     }
     
-    public void setResultClass(Class resultClass)
+    public void setResultClass(Class<?> resultClass)
     {
         this.resultClass = resultClass;
     }

@@ -18,11 +18,13 @@
 package darks.orm.core.interceptor;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import darks.orm.annotation.sqlmap.Query;
 import darks.orm.annotation.sqlmap.Update;
+import darks.orm.app.Page;
 import darks.orm.app.QueryEnumType;
 import darks.orm.app.SqlSession;
 import darks.orm.core.data.xml.DMLData;
@@ -38,7 +40,6 @@ import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.SqlHelper;
 
-@SuppressWarnings("unchecked")
 public class SqlMapInterceptor implements MethodInterceptor
 {
     
@@ -46,14 +47,14 @@ public class SqlMapInterceptor implements MethodInterceptor
     
     private SqlSession session;
     
-    private Class cls;
+    private Class<?> cls;
     
     public SqlMapInterceptor()
     {
         
     }
     
-    public SqlMapInterceptor(SqlSession session, Class cls)
+    public SqlMapInterceptor(SqlSession session, Class<?> cls)
     {
         this.session = session;
         this.cls = cls;
@@ -92,37 +93,20 @@ public class SqlMapInterceptor implements MethodInterceptor
         String methodName = method.toGenericString();
         String namesp = className + "." + methodName;
         InterfaceMethodData data = ClassFactory.parseInterfaceClass(namesp, method);
-        
+        int pageIndex = data.getArgumentIndex(InterfaceMethodData.PAGE_PARAM_KEY);
+        int pageSizeIndex = data.getArgumentIndex(InterfaceMethodData.PAGESIZE_PARAM_KEY);
         int page = -1;
         int pageSize = -1;
-        int num = args.length;
-        if (data.getPageIndex() >= 0)
+        if (pageIndex >= 0)
         {
-            page = (Integer)args[data.getPageIndex()];
-            num--;
+            page = (Integer)args[pageIndex];
         }
-        if (data.getPageSizeIndex() >= 0)
+        if (pageSizeIndex >= 0)
         {
-            pageSize = (Integer)args[data.getPageSizeIndex()];
-            num--;
+            pageSize = (Integer)args[pageSizeIndex];
         }
         String sql = data.getSql();
         Object[] params = args;
-        if (num != args.length && sql.indexOf('#') < 0)
-        {
-            params = new Object[num];
-            int index = 0;
-            if (num > 0)
-            {
-                for (int i = 0; i < args.length; i++)
-                {
-                    if (i != data.getPageIndex() && i != data.getPageSizeIndex() && i != data.getValuesIndex())
-                    {
-                        params[index++] = args[i];
-                    }
-                }
-            }
-        }
         params = SqlHelper.buildParams(sql, params);
         sql = SqlHelper.filterSql(sql);
         QueryEnumType queryEnumType = data.getQueryEnumType();
@@ -176,9 +160,12 @@ public class SqlMapInterceptor implements MethodInterceptor
             return null;
         }
         DMLQueryData queryData = dmlData.getQueryData();
+        int pageIndex = data.addExternArgument(queryData.getPageParam(), InterfaceMethodData.PAGE_PARAM_KEY);
+        int pageSizeIndex = data.addExternArgument(queryData.getPageSizeParam(), InterfaceMethodData.PAGESIZE_PARAM_KEY);
+        int valuesIndex = data.addExternArgument(queryData.getValuesParam(), InterfaceMethodData.VALUES_PARAM_KEY);
         if (queryData.getQueryType() == QueryEnumType.Page)
         {
-            if (data.getPageIndex() < 0 || data.getPageSizeIndex() < 0)
+            if (pageIndex < 0 || pageSizeIndex < 0)
             {
                 throw new SqlMapQueryException("('" + namesp + "') the index of page or pageSize is less than 0");
             }
@@ -186,45 +173,46 @@ public class SqlMapInterceptor implements MethodInterceptor
         int page = -1;
         int pageSize = -1;
         Object[] values = null;
-        int num = args.length;
-        if (data.getPageIndex() >= 0)
+        if (pageIndex >= 0)
         {
-            page = (Integer)args[data.getPageIndex()];
-            num--;
+            page = (Integer)args[pageIndex];
         }
-        if (data.getPageSizeIndex() >= 0)
+        if (pageSizeIndex >= 0)
         {
-            pageSize = (Integer)args[data.getPageSizeIndex()];
-            num--;
+            pageSize = (Integer)args[pageSizeIndex];
         }
-        if (data.getValuesIndex() >= 0)
+        if (valuesIndex >= 0)
         {
-            values = (Object[])args[data.getValuesIndex()];
-            num--;
-        }
-        String sql = queryData.getSql(values);
-        Object[] params = args;
-        if (num != args.length && sql.indexOf('#') < 0)
-        {
-            params = new Object[num];
-            int index = 0;
-            if (num > 0)
+            Object valObj = args[valuesIndex];
+            if (valObj instanceof Object[])
             {
-                for (int i = 0; i < args.length; i++)
-                {
-                    if (i != data.getPageIndex() && i != data.getPageSizeIndex() && i != data.getValuesIndex())
-                    {
-                        params[index++] = args[i];
-                    }
-                }
+            	values = (Object[])valObj;
             }
         }
+        Object[] params = args;
         return SqlMapSingletonFactory.getInstance().query(getSession(),
             namesp,
-            QueryEnumType.List,
+            parseAutoQueryType(method),
             page,
             pageSize,
             values,
             params);
+    }
+    
+    private QueryEnumType parseAutoQueryType(Method method)
+    {
+    	Class<?> clazz = method.getReturnType();
+    	if (clazz.isAssignableFrom(Collection.class))
+    	{
+    		return QueryEnumType.List;
+    	}
+    	else if (clazz.isAssignableFrom(Page.class))
+    	{
+    		return QueryEnumType.Page;
+    	}
+    	else
+    	{
+    		return QueryEnumType.Object;
+    	}
     }
 }

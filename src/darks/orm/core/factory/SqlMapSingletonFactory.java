@@ -87,7 +87,7 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * 执行DDL语句
+     * Execute DDL MAP
      */
     public void executeDDLMap()
     {
@@ -96,10 +96,10 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * SQLMAP更新
+     * SqlMap execute update
      * 
-     * @param id SQLMAP编号
-     * @param params 注入参数(数组)
+     * @param id SQLMAP id
+     * @param params Parameters
      */
     public Object update(SqlSession session, String id, Object[] params)
         throws SqlMapUpdateException
@@ -107,7 +107,7 @@ public class SqlMapSingletonFactory
         DMLData dmlData = null;
         if (id == null)
         {
-            throw new SqlMapUpdateException("SqlMapSingletonFactory::Update id is not allowed to be null");
+            throw new SqlMapUpdateException("Update id is not allowed to be null");
         }
         else
         {
@@ -173,14 +173,14 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * 根据查询结果类型进行SQLMAP查询
+     * Execute sqlmap query
      * 
-     * @param session BASEDAO实例
-     * @param id SQLMAP编号
-     * @param queryEnumType 查询结果类型枚举
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 对象
+     * @param session Sql session
+     * @param id SQLMAP id
+     * @param queryEnumType QueryEnumType
+     * @param values <select> <constitute> values 
+     * @param params Parameters
+     * @return  result object
      * @throws Exception
      */
     public Object query(SqlSession session, String id, QueryEnumType queryEnumType, int page, int pageSize,
@@ -233,12 +233,12 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * SQLMAP查询单个对象
+     * SQLMAP query single object
      * 
-     * @param session BASEDAO实例
-     * @param id SQLMAP编号
-     * @param params 注入参数(数组)
-     * @return 单个对象
+     * @param session Sql session
+     * @param id SQLMAP id
+     * @param params Query parameters
+     * @return result object
      * @throws Exception
      */
     public Object queryObject(SqlSession session, String id, Object[] params)
@@ -248,13 +248,13 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * SQLMAP查询单个对象
+     * SQLMAP query single object
      * 
-     * @param session BASEDAO实例
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 单个对象
+     * @param session Sql session
+     * @param id SQLMAP id
+     * @param values <select> <constitute> values
+     * @param params Query parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryObject(SqlSession session, String id, Object[] values, Object[] params)
@@ -264,13 +264,13 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * SQLMAP查询列表对象
+     * SQLMAP query list
      * 
-     * @param session BASEDAO实例
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 列表对象
+     * @param session Sql session 
+     * @param id SQLMAP id
+     * @param values <select> <constitute> values
+     * @param params Query parameters
+     * @return Result list
      * @throws Exception
      */
     public List<?> queryList(SqlSession session, String id, Object[] values, Object[] params)
@@ -280,13 +280,13 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * SQLMAP查询分页对象
+     * SQLMAP query page list
      * 
-     * @param session BASEDAO实例
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 分页对象
+     * @param session Sql session
+     * @param id SQLMAP id
+     * @param values <select> <constitute> values
+     * @param params Query parameters
+     * @return Page result
      * @throws Exception
      */
     public Page<?> queryPageList(SqlSession session, String id, int page, int pageSize, Object[] values, Object[] params)
@@ -296,14 +296,14 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * 根据查询类型进行SQLMAP查询
+     * SQLMAP query data by {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param session BASEDAO实例
-     * @param queryEnumType 查询类型枚举
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数
-     * @return 查询结果对象
+     * @param session SQL session
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param id SQLMAP id
+     * @param values <select> <constitute> values
+     * @param params Query parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryForType(SqlSession session, QueryEnumType queryEnumType, String id, Object[] values,
@@ -314,20 +314,20 @@ public class SqlMapSingletonFactory
     }
     
     /**
-     * 根据查询类型进行SQLMAP查询
+     * SQLMAP query data by {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param session BASEDAO实例
-     * @param queryEnumType 查询类型枚举
-     * @param id SQLMAP编号
-     * @param page 当前页数
-     * @param pageSize 分页大小
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数
-     * @return 查询结果对象
+     * @param session SQL session
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param id SQLMAP id
+     * @param page Current page
+     * @param pageSize Page size each page
+     * @param values <select> <constitute> values
+     * @param params Query parameters
+     * @return Result object
+     * @throws Exception 
      */
     public Object queryForType(SqlSession session, QueryEnumType queryEnumType, String id, int page, int pageSize,
         Object[] values, Object[] params)
-        throws SqlMapQueryException
     {
         if (id == null)
         {
@@ -336,7 +336,7 @@ public class SqlMapSingletonFactory
         DMLData dmlData = sqlMapConfig.getDMLData(id);
         if (dmlData == null)
         {
-            throw new SqlMapQueryException("Query the id ('" + id + "') does not exists");
+            throw new SqlMapUpdateException("Query the id ('" + id + "') does not exists");
         }
         if (dmlData.getType() != DMLType.Query)
         {
@@ -347,17 +347,27 @@ public class SqlMapSingletonFactory
         {
             throw new SqlMapQueryException("Query queryData is null");
         }
-        String sql = queryData.getSql(values);
+        InterfaceMethodData idata = ClassFactory.getInterfaceClass(id);
+        StringBuilder sqlBuf = new StringBuilder();
+        try
+		{
+        	params = queryData.getSqlTag().computeSql(sqlBuf, params, idata);
+		}
+		catch (Exception e1)
+		{
+			throw new SqlMapQueryException(e1.getMessage(), e1);
+		}
+        String sql = sqlBuf.toString();
+        //String sql = queryData.getSql(values);
         if (sql == null)
         {
-            throw new SqlMapQueryException("sql does not exists");
+            throw new SqlMapQueryException("[SQLMAP]sql does not exists");
         }
         String attr = queryData.getAttribute();
         String alias = queryData.getAlias();
         
         try
         {
-            InterfaceMethodData idata = ClassFactory.getInterfaceClass(id);
             Map<String, Integer> dataMap = null;
             if (idata != null)
                 dataMap = idata.getArgumentsMap();

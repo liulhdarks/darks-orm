@@ -32,11 +32,11 @@ public final class PythonBuilder
     
     private static final int INIT_BODY_BUFFER_SIZE = 256;
     
-    public static final String JY_ESPECT_CLASS = "__ESPECT_CLASS";
+    public static final String JY_ASPECT_CLASS = "__ASPECT_CLASS";
     
-    public static final String JY_ESPECT_BEFORE = "before";
+    public static final String JY_ASPECT_BEFORE = "before";
     
-    public static final String JY_ESPECT_AFTER = "after";
+    public static final String JY_ASPECT_AFTER = "after";
     
     private static final ConcurrentMap<Integer, String> pyMap = new ConcurrentHashMap<Integer, String>();
     
@@ -72,7 +72,7 @@ public final class PythonBuilder
     public static final String buildJythonTail(String className)
     {
         StringBuffer pyContent = new StringBuffer(INIT_TAIL_BUFFER_SIZE);
-        pyContent.append(JY_ESPECT_CLASS);
+        pyContent.append(JY_ASPECT_CLASS);
         pyContent.append(" = ");
         pyContent.append(className);
         pyContent.append("()");
@@ -87,15 +87,15 @@ public final class PythonBuilder
      * @param python 脚本
      * @return 完整脚本
      */
-    public static String buildJython(AspectData espectData, String className, String python)
+    public static String buildJython(AspectData aspectData, String className, String python)
     {
-        if (espectData == null || python == null)
+        if (aspectData == null || python == null)
             return null;
-        int key = espectData.hashCode();
+        int key = aspectData.hashCode();
         String ret = pyMap.get(key);
         if (ret != null)
             return ret;
-        synchronized (espectData)
+        synchronized (aspectData)
         {
             ret = pyMap.get(key);
             if (ret != null)
