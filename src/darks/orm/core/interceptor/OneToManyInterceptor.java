@@ -34,7 +34,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 /**
- * BEAN方法拦截类 作者:DarkShadow 版权:归夜影所有 时间:2011-12-25 版本:1.0.0
+ * Method interrupter used to Intercept One-to-many and one-to-one
  */
 @SuppressWarnings("unchecked")
 public class OneToManyInterceptor implements MethodInterceptor, Serializable
@@ -65,14 +65,14 @@ public class OneToManyInterceptor implements MethodInterceptor, Serializable
         {
             return proxy.invokeSuper(obj, args);
         }
-        List list = (List)proxy.invokeSuper(obj, args);
+        List<?> list = (List<?>)proxy.invokeSuper(obj, args);
         
-        Class pkc = obj.getClass();
-        Class c = om.resultType();
+        Class<?> pkc = obj.getClass();
+        Class<?> c = om.resultType();
         if (c == null)
         {
             ParameterizedType pt = (ParameterizedType)method.getGenericReturnType();
-            c = (Class)pt.getActualTypeArguments()[0];
+            c = (Class<?>)pt.getActualTypeArguments()[0];
         }
         String sql = null;
         Object val = null;
@@ -141,7 +141,7 @@ public class OneToManyInterceptor implements MethodInterceptor, Serializable
         
         String mn = method.getName();
         mn = mn.replaceFirst("get", "set");
-        Class cobj = obj.getClass();
+        Class<?> cobj = obj.getClass();
         Method mt = ReflectHelper.getAllMethod(cobj, mn, method.getReturnType());
         //cobj.getMethod(mn, new Class[] { method.getReturnType() });
         mt.invoke(obj, list);

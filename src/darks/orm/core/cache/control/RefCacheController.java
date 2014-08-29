@@ -29,7 +29,6 @@ import darks.orm.core.cache.CacheObjectUpdater;
 import darks.orm.core.cache.CacheController;
 import darks.orm.core.data.xml.CacheConfigData;
 
-@SuppressWarnings("unchecked")
 public class RefCacheController implements CacheController
 {
     
@@ -98,11 +97,11 @@ public class RefCacheController implements CacheController
         Object ref = entityMap.get(key);
         if (ref instanceof SoftReference)
         {
-            value = ((SoftReference)ref).get();
+            value = ((SoftReference<?>)ref).get();
         }
         else if (ref instanceof WeakReference)
         {
-            value = ((WeakReference)ref).get();
+            value = ((WeakReference<?>)ref).get();
         }
         return value;
     }

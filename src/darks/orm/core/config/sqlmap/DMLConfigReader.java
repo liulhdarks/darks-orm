@@ -124,7 +124,7 @@ public class DMLConfigReader
 
 		RootTag rootTag = new RootTag();
 		parseSqlTag(rootTag, element);
-		queryData.setSqlTag(rootTag);
+		dmlData.setSqlTag(rootTag);
 		String sql = element.getTextTrim();
 		if (sql != null && !"".equals(sql))
 		{
@@ -297,13 +297,18 @@ public class DMLConfigReader
 	 * Read and parse update tags
 	 * 
 	 * @param element Update tag
+	 * @throws Exception 
 	 */
-	private DMLData readUpdate(Element element, File file, String namesp)
+	private DMLData readUpdate(Element element, File file, String namesp) throws Exception
 	{
 		DMLData dmlData = new DMLData();
 		String sql = element.getTextTrim();
 		dmlData.setType(DMLType.Update);
 		DMLUpdateData updateData = new DMLUpdateData();
+
+		RootTag rootTag = new RootTag();
+		parseSqlTag(rootTag, element);
+		dmlData.setSqlTag(rootTag);
 		updateData.setSql(sql);
 		for (Iterator<Attribute> it = element.attributeIterator(); it.hasNext();)
 		{

@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import darks.orm.annotation.sqlmap.Query;
+import darks.orm.annotation.sqlmap.Select;
 import darks.orm.annotation.sqlmap.Update;
 import darks.orm.app.Page;
 import darks.orm.app.QueryEnumType;
@@ -70,7 +70,7 @@ public class SqlMapInterceptor implements MethodInterceptor
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy)
         throws Throwable
     {
-        Query query = method.getAnnotation(Query.class);
+        Select query = method.getAnnotation(Select.class);
         Update update = method.getAnnotation(Update.class);
         if (query != null)
         {

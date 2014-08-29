@@ -36,7 +36,7 @@ import darks.orm.log.LoggerFactory;
 import darks.orm.util.ReflectHelper;
 
 /**
- * BEAN方法拦截类 作者:DarkShadow 版权:归夜影所有 时间:2011-12-25 版本:1.0.0
+ * Method interrupter used to Intercept Many-to-one and one-to-one
  */
 @SuppressWarnings("unchecked")
 public class AnyToOneInterceptor implements MethodInterceptor, Serializable
@@ -63,7 +63,7 @@ public class AnyToOneInterceptor implements MethodInterceptor, Serializable
         {
             String sql = null;
             String fn = null;
-            Class c = null;
+            Class<?> c = null;
             boolean type = false;
             ManyToOne mo = (ManyToOne)method.getAnnotation(ManyToOne.class);
             if (mo == null)
@@ -98,7 +98,7 @@ public class AnyToOneInterceptor implements MethodInterceptor, Serializable
             {
                 if ("".equals(fn))
                     return null;
-                Class pkc = obj.getClass();
+                Class<?> pkc = obj.getClass();
                 Object val = null;
                 String fs = ClassFactory.getFieldNames(c);
                 String tn = ClassFactory.getTableName(c);

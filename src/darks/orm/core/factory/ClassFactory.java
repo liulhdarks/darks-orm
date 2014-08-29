@@ -35,7 +35,7 @@ import darks.orm.annotation.OneToMany;
 import darks.orm.annotation.OneToOne;
 import darks.orm.annotation.Param;
 import darks.orm.annotation.Temporary;
-import darks.orm.annotation.sqlmap.Query;
+import darks.orm.annotation.sqlmap.Select;
 import darks.orm.annotation.sqlmap.Update;
 import darks.orm.core.data.EntityData;
 import darks.orm.core.data.FieldData;
@@ -191,7 +191,7 @@ public class ClassFactory
 			{
 				return data;
 			}
-			Query query = method.getAnnotation(Query.class);
+			Select query = method.getAnnotation(Select.class);
 			Update update = method.getAnnotation(Update.class);
 			data = new InterfaceMethodData(query, update, method);
 			mapIFaceMethod.put(id, data);

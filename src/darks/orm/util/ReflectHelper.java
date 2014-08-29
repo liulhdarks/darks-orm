@@ -272,8 +272,7 @@ public final class ReflectHelper
      * @param method 原始方法
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public static FastMethod getFastMethod(Class clazz, String methodName, Class<?>... methodTypes)
+    public static FastMethod getFastMethod(Class<?> clazz, String methodName, Class<?>... methodTypes)
         throws SecurityException, NoSuchMethodException
     {
         FastClassData data = parseFastClass(clazz);

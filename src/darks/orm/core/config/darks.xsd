@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://www.darks.org/schema/darks"
+			xmlns="http://www.darks.org/schema/darks"
+			elementFormDefault="qualified">
+		<!-- 
+			file name:darks.xsd
+			author:Liu Lihua
+			version:1.0
+		 -->
+		<xsd:element name="darks" type="mainType"></xsd:element>
+		<xsd:complexType name="mainType">
+			<xsd:sequence>
+				<xsd:element name="dataSource" type="dataSourceType" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+				<xsd:element name="logger" type="loggerType" minOccurs="0" maxOccurs="1"></xsd:element>
+				<xsd:element name="useThreadLocal" type="useThreadLocalType" minOccurs="0" maxOccurs="1"></xsd:element>
+				<xsd:element name="entitys" type="entitysType" minOccurs="0" maxOccurs="1"></xsd:element>	
+				<xsd:element name="cacheGroup" type="cacheGroupType" minOccurs="0" maxOccurs="1"></xsd:element>				
+				<xsd:element name="sqlMapGroup" type="sqlMapGroupType" minOccurs="0" maxOccurs="1"></xsd:element>				
+			</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:complexType name="dataSourceType">
+			<xsd:sequence>
+				<xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+						<xsd:attribute name="value" type="xsd:string" use="required"></xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>	
+				<xsd:element name="resultSet" type="resultSetType" minOccurs="0" maxOccurs="1"></xsd:element>	
+			</xsd:sequence>
+			<xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
+			<xsd:attribute name="id" type="xsd:string" use="optional"></xsd:attribute>
+			<xsd:attribute name="main" type="xsd:boolean" use="optional"></xsd:attribute>
+			<xsd:attribute name="chainref" type="xsd:string" use="optional"></xsd:attribute>
+		</xsd:complexType>
+		
+		<xsd:complexType name="resultSetType">
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="type">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:NMTOKEN">
+								<xsd:enumeration value="forward"/>
+								<xsd:enumeration value="scroll"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="sensitive" type="xsd:boolean" use="optional" default="false"></xsd:attribute>
+					<xsd:attribute name="concurrency" use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:NMTOKEN">
+								<xsd:enumeration value="read"/>
+								<xsd:enumeration value="updatable"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+		
+		<xsd:complexType name="entitysType">
+			<xsd:sequence>
+				<xsd:element name="entity" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base="xsd:string">
+								<xsd:attribute name="alias" type="xsd:string" use="optional"></xsd:attribute>
+								<xsd:attribute name="class" type="xsd:string" use="required"></xsd:attribute>
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>	
+			</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:complexType name="loggerType">
+			<xsd:sequence>
+				<xsd:element name="showSql" type="xsd:boolean" minOccurs="0" maxOccurs="1"></xsd:element>
+				<xsd:element name="showLog" type="xsd:boolean" minOccurs="0" maxOccurs="1"></xsd:element>	
+				<xsd:element name="writeLog" type="xsd:boolean" minOccurs="0" maxOccurs="1"></xsd:element>		
+			</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:complexType name="useThreadLocalType">
+			<xsd:attribute name="use" type="xsd:boolean" use="required"></xsd:attribute>
+		</xsd:complexType>
+		
+		<xsd:complexType name="sqlMapGroupType">
+			<xsd:sequence>
+				<xsd:element name="sqlMap" type="xsd:string" minOccurs="0" maxOccurs="unbounded"></xsd:element>	
+			</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:simpleType name="cacheStrategyType">
+			<xsd:restriction base="xsd:NMTOKEN">
+				<xsd:enumeration value="Fifo"/>
+				<xsd:enumeration value="Lru"/>
+				<xsd:enumeration value="SoftRef"/>
+				<xsd:enumeration value="WeakRef"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+		
+		<xsd:complexType name="appCacheType">
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="id" type="xsd:string" use="optional" fixed="application"></xsd:attribute>
+					<xsd:attribute name="strategy" type="cacheStrategyType"></xsd:attribute>
+					<xsd:attribute name="maxObject" type="xsd:int" default="10000"/>
+					<xsd:attribute name="idleTime" type="xsd:int" default="0"/>
+					<xsd:attribute name="liveTime" type="xsd:int" default="0"/>
+					<xsd:attribute name="eternal" type="xsd:boolean" default="true"/>
+					<xsd:attribute name="entirety" type="xsd:boolean" default="false"/>
+					<xsd:attribute name="copyStrategy" use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:NMTOKEN">
+								<xsd:enumeration value="field"/>
+								<xsd:enumeration value="serial"/>
+								<xsd:enumeration value="ref"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+		
+		<xsd:complexType name="threadCacheType">
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="id" type="xsd:string" use="optional" fixed="thread"></xsd:attribute>
+					<xsd:attribute name="strategy" type="cacheStrategyType"></xsd:attribute>
+					<xsd:attribute name="maxObject" type="xsd:int" default="10000"/>
+					<xsd:attribute name="entirety" type="xsd:boolean" default="false"/>
+					<xsd:attribute name="copyStrategy" use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:NMTOKEN">
+								<xsd:enumeration value="field"/>
+								<xsd:enumeration value="serial"/>
+								<xsd:enumeration value="ref"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+		
+		<xsd:complexType name="ehCacheType">
+			<xsd:all>
+				<xsd:element name="configPath" type="xsd:string" minOccurs="0" maxOccurs="1"></xsd:element>
+			</xsd:all>
+			<xsd:attribute name="id" type="xsd:string"></xsd:attribute>
+			<xsd:attribute name="name" type="xsd:string" use="optional"></xsd:attribute>
+			<xsd:attribute name="maxElementsInMemory" type="xsd:int" default="10000"/>
+			<xsd:attribute name="maxElementsOnDisk" type="xsd:int" default="10000000"/>
+			<xsd:attribute name="timeToIdleSeconds" type="xsd:int" default="0"/>
+			<xsd:attribute name="timeToLiveSeconds" type="xsd:int" default="0"/>
+			<xsd:attribute name="eternal" type="xsd:boolean" default="true"/>
+			<xsd:attribute name="overflowToDisk" type="xsd:boolean" default="false"/>
+			<xsd:attribute name="diskPersistent" type="xsd:boolean" default="false"/>
+			<xsd:attribute name="diskExpiryThreadIntervalSeconds" type="xsd:int" default="120"/>
+			<xsd:attribute name="memoryStoreEvictionPolicy" type="xsd:string" default="LRU"/> 
+		</xsd:complexType>
+		
+		<xsd:complexType name="cacheGroupType">
+			<xsd:sequence>
+				<xsd:element name="appCache" type="appCacheType" minOccurs="0" maxOccurs="1"></xsd:element>
+				<xsd:element name="threadCache" type="threadCacheType" minOccurs="0" maxOccurs="1"></xsd:element>
+				<xsd:element name="ehCache" type="ehCacheType" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="use" type="xsd:boolean" use="required"></xsd:attribute>
+			<xsd:attribute name="type" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:NMTOKEN">
+						<xsd:enumeration value="auto"/>
+						<xsd:enumeration value="manual"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="cacheId" type="xsd:string" use="optional"></xsd:attribute>
+			<xsd:attribute name="synchronous" type="xsd:boolean" use="optional"></xsd:attribute>
+		</xsd:complexType>
+		
+</xsd:schema>

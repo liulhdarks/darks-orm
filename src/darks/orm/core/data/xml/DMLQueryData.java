@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import darks.orm.app.QueryEnumType;
-import darks.orm.core.data.tags.RootTag;
 import darks.orm.util.StringHelper.ParamFlag;
 
 public class DMLQueryData implements Cloneable
@@ -59,8 +58,6 @@ public class DMLQueryData implements Cloneable
     private DMLQueryDataType queryDataType;
     
     private AspectData aspectData;
-    
-    private RootTag sqlTag;
     
     private ParamFlag valuesParam;
     
@@ -327,16 +324,6 @@ public class DMLQueryData implements Cloneable
     {
         this.aspectData = aspectData;
     }
-    
-    public RootTag getSqlTag()
-	{
-		return sqlTag;
-	}
-
-	public void setSqlTag(RootTag sqlTag)
-	{
-		this.sqlTag = sqlTag;
-	}
 	
 
 	public ParamFlag getValuesParam()

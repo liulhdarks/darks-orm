@@ -126,7 +126,19 @@ public class SqlMapSingletonFactory
         {
             throw new SqlMapUpdateException("Update updateData is null");
         }
-        String sql = updateData.getSql();
+        
+        InterfaceMethodData idata = ClassFactory.getInterfaceClass(id);
+        StringBuilder sqlBuf = new StringBuilder();
+        try
+		{
+        	params = dmlData.getSqlTag().computeSql(sqlBuf, params, idata);
+		}
+		catch (Exception e1)
+		{
+			throw new SqlMapUpdateException(e1.getMessage(), e1);
+		}
+        String sql = sqlBuf.toString();
+//        String sql = updateData.getSql();
         if (sql == null || "".equals(sql))
         {
             throw new SqlMapUpdateException("Update sql is null/empty");
@@ -139,7 +151,6 @@ public class SqlMapSingletonFactory
         }
         try
         {
-            InterfaceMethodData idata = ClassFactory.getInterfaceClass(id);
             Map<String, Integer> dataMap = null;
             if (idata != null)
                 dataMap = idata.getArgumentsMap();
@@ -351,7 +362,7 @@ public class SqlMapSingletonFactory
         StringBuilder sqlBuf = new StringBuilder();
         try
 		{
-        	params = queryData.getSqlTag().computeSql(sqlBuf, params, idata);
+        	params = dmlData.getSqlTag().computeSql(sqlBuf, params, idata);
 		}
 		catch (Exception e1)
 		{

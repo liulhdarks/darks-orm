@@ -145,7 +145,6 @@ public class TableGeneratorFactory
                     stmt.close();
                 if (conn != null)
                     conn.close();
-                Thread thread = Thread.currentThread();
                 logger.debug("TableGeneratorFactory merge table close connection");
             }
             catch (Exception e)

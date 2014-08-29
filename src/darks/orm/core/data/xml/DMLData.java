@@ -17,6 +17,8 @@
 
 package darks.orm.core.data.xml;
 
+import darks.orm.core.data.tags.RootTag;
+
 public class DMLData
 {
     
@@ -36,6 +38,8 @@ public class DMLData
     private DMLQueryData queryData;
     
     private DMLUpdateData updateData;
+    
+    private RootTag sqlTag;
     
     public DMLData()
     {
@@ -108,5 +112,16 @@ public class DMLData
     {
         this.cacheId = cacheId;
     }
+
+	public RootTag getSqlTag()
+	{
+		return sqlTag;
+	}
+
+	public void setSqlTag(RootTag sqlTag)
+	{
+		this.sqlTag = sqlTag;
+	}
+    
     
 }

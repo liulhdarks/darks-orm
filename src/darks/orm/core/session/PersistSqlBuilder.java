@@ -35,9 +35,8 @@ import darks.orm.log.LoggerFactory;
 import darks.orm.util.DataTypeHelper;
 
 /**
- * BEAN支持类 作者:DarkShadow 版权:归夜影所有 时间:2011-11-10 版本:1.0.0
+ * Build SQL for persist entity such as insert and update
  */
-@SuppressWarnings("unchecked")
 public abstract class PersistSqlBuilder
 {
     
@@ -191,7 +190,7 @@ public abstract class PersistSqlBuilder
             {
                 if (fdata.getFieldFlag() == FieldFlag.FkEntity)
                 {
-                    Class fclass = fdata.getFkClass();
+                    Class<?> fclass = fdata.getFkClass();
                     o = ClassFactory.getPrimaryKeyValue(fclass, o);
                 }
             }

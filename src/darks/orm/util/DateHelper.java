@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * 工具类 作者:DarkShadow 版权:归夜影所有 时间:2011-11-10 版本:1.0.0
+ * Date helper
  */
 
 public class DateHelper

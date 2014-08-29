@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import darks.orm.annotation.Param;
-import darks.orm.annotation.sqlmap.Query;
-import darks.orm.annotation.sqlmap.Query.QueryType;
+import darks.orm.annotation.sqlmap.Select;
+import darks.orm.annotation.sqlmap.Select.QueryType;
 import darks.orm.annotation.sqlmap.Update;
 import darks.orm.app.QueryEnumType;
 import darks.orm.exceptions.SessionException;
@@ -65,7 +65,7 @@ public class InterfaceMethodData
         argumentsMap = new HashMap<String, Integer>();
     }
     
-    public InterfaceMethodData(Query query, Update update, Method method)
+    public InterfaceMethodData(Select query, Update update, Method method)
     {
         argumentsMap = new HashMap<String, Integer>();
     	autoCache = true;
@@ -81,7 +81,7 @@ public class InterfaceMethodData
         }
     }
     
-    private void parseQuery(Query query)
+    private void parseQuery(Select query)
     {
     	sql = query.SQL();
         resultClass = query.resultType();

@@ -149,7 +149,7 @@ public class ApplicationCacheFactory implements CacheFactory
             if (obj instanceof List && !appConfigData.isEntirety())
             {
                 // 当为非整体存入时,存入列表对象
-                List list = (List)obj;
+                List<?> list = (List<?>)obj;
                 if (list.size() > appConfigData.getMaxObject())
                 {
                     throw new CacheException("the size of list cacheing is flowover the max limit");
