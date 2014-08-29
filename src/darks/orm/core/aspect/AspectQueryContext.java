@@ -42,7 +42,7 @@ public class AspectQueryContext implements QueryAspect
     /**
      * ¸ù¾ÝA
      * 
-     * @param espectData
+     * @param aspectData
      * @return
      */
     public QueryAspectAdapter createQueryAspect(AspectData aspectData)
@@ -64,22 +64,22 @@ public class AspectQueryContext implements QueryAspect
         }
     }
     
-    public boolean beforeInvoke(SqlSession dao, AspectData espectData, QueryAspectWrapper queryWrapper,
+    public boolean beforeInvoke(SqlSession dao, AspectData aspectData, QueryAspectWrapper queryWrapper,
         QueryEnumType queryEnumType)
         throws AspectException
     {
         if (queryAspect == null)
             return false;
-        return queryAspect.beforeInvoke(dao, espectData, queryWrapper, queryEnumType);
+        return queryAspect.beforeInvoke(dao, aspectData, queryWrapper, queryEnumType);
     }
     
-    public boolean afterInvoke(SqlSession dao, AspectData espectData, QueryAspectWrapper queryWrapper,
+    public boolean afterInvoke(SqlSession dao, AspectData aspectData, QueryAspectWrapper queryWrapper,
         QueryEnumType queryEnumType)
         throws AspectException
     {
         if (queryAspect == null)
             return false;
-        return queryAspect.afterInvoke(dao, espectData, queryWrapper, queryEnumType);
+        return queryAspect.afterInvoke(dao, aspectData, queryWrapper, queryEnumType);
     }
     
     public QueryAspectAdapter getQueryAspect()

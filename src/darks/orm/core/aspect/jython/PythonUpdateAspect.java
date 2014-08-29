@@ -61,7 +61,7 @@ public class PythonUpdateAspect extends UpdateAspectAdapter
         if (PluginHelper.isRegJythonPlugin())
         {
             PythonParser parser = getPythonParser();
-            return parser.parse(aspectData, simpleWrapper, null, PythonBuilder.JY_ESPECT_AFTER);
+            return parser.parse(aspectData, simpleWrapper, null, PythonBuilder.JY_ASPECT_AFTER);
         }
         return true;
     }
@@ -76,7 +76,7 @@ public class PythonUpdateAspect extends UpdateAspectAdapter
         if (PluginHelper.isRegJythonPlugin())
         {
             PythonParser parser = getPythonParser();
-            return parser.parse(aspectData, simpleWrapper, null, PythonBuilder.JY_ESPECT_BEFORE);
+            return parser.parse(aspectData, simpleWrapper, null, PythonBuilder.JY_ASPECT_BEFORE);
         }
         return true;
     }

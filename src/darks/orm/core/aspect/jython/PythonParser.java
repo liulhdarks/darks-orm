@@ -31,14 +31,15 @@ import org.python.util.PythonInterpreter;
 public class PythonParser
 {
     
-    public static String JY_ESPECT_DATA = "__DATA";
+    public static String JY_ASPECT_DATA = "__DATA";
     
     /**
-     * 解析XML脚本
+     * Parse python script data
      * 
-     * @param queryData 查询数据
-     * @param smEspectData 注入数据
-     * @param methodType 解析方法类型 JY_ESPECT_BEFORE or JY_ESPECT_AFTER
+     * @param aspectData Aspect data
+     * @param simpleWrapper {@linkplain darks.orm.core.data.xml.SimpleAspectWrapper SimpleAspectWrapper}
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param methodType 解析方法类型 JY_ASPECT_BEFORE or JY_ASPECT_AFTER
      * @return 是否继续执行
      */
     public boolean parse(AspectData aspectData, SimpleAspectWrapper simpleWrapper, QueryEnumType queryEnumType,
@@ -71,8 +72,8 @@ public class PythonParser
         {
             return true;
         }
-        PyObject espectObj = pyInter.get(PythonBuilder.JY_ESPECT_CLASS);
-        PyObject retObj = espectObj.invoke(methodType);
+        PyObject aspectObj = pyInter.get(PythonBuilder.JY_ASPECT_CLASS);
+        PyObject retObj = aspectObj.invoke(methodType);
         
         if (retObj == null || retObj instanceof PyNone)
         {
@@ -105,11 +106,11 @@ public class PythonParser
         PythonInterpreter pyInter = JythonFactory.getInstance().getInterpreter();
         if (simpleWrapper instanceof QueryAspectWrapper)
         {
-            pyInter.set(JY_ESPECT_DATA, (QueryAspectWrapper)simpleWrapper);
+            pyInter.set(JY_ASPECT_DATA, (QueryAspectWrapper)simpleWrapper);
         }
         else
         {
-            pyInter.set(JY_ESPECT_DATA, simpleWrapper);
+            pyInter.set(JY_ASPECT_DATA, simpleWrapper);
         }
         return pyInter;
     }

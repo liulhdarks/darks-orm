@@ -216,7 +216,6 @@ public class SqlHelper
         List<Object> list = new LinkedList<Object>();
         String tmp = null;
         Object arg = null;
-        boolean isAccess = false;
         Class<?> clazz = null;
         Field field = null;
         for (SqlParamData data : dataList)
@@ -253,34 +252,14 @@ public class SqlHelper
                 }
                 else
                 {
-                    try
+                    clazz = arg.getClass();
+                    field = ReflectHelper.getAllField(clazz, tmp);
+                    if (field == null)
+                        throw new SQLException("buildSqlParams field " + tmp + " does not exists in " + clazz);
+                    arg = ReflectHelper.getFieldValue(field, arg);
+                    if (arg == null)
                     {
-                        clazz = arg.getClass();
-                        field = clazz.getDeclaredField(tmp);
-                        if (field == null)
-                            throw new SQLException("buildSqlParams field " + tmp + " does not exists in " + clazz);
-                        isAccess = field.isAccessible();
-                        if (!isAccess)
-                            field.setAccessible(true);
-                        arg = field.get(arg);
-                        if (!isAccess)
-                            field.setAccessible(isAccess);
-                    }
-                    catch (SecurityException e)
-                    {
-                        throw new SQLException("buildSqlParams fail to get value in " + clazz, e);
-                    }
-                    catch (NoSuchFieldException e)
-                    {
-                        throw new SQLException("buildSqlParams fail to get value in " + clazz, e);
-                    }
-                    catch (IllegalArgumentException e)
-                    {
-                        throw new SQLException("buildSqlParams fail to get value in " + clazz, e);
-                    }
-                    catch (IllegalAccessException e)
-                    {
-                        throw new SQLException("buildSqlParams fail to get value in " + clazz, e);
+                    	throw new SQLException("buildSqlParams fail to get value in " + clazz);
                     }
                 }
                 cur = cur.next();
@@ -297,7 +276,9 @@ public class SqlHelper
     {
         List<SqlParamData> dataList = parseSqlParams(sql);
         if (dataList == null)
-            return args;
+        {
+        	dataList = new ArrayList<SqlParamData>();
+        }
         List<Object> list = buildSqlParams(dataList, argMap, args);
         return list.toArray();
     }

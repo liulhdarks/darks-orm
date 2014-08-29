@@ -72,7 +72,7 @@ public class FieldCopyStrategy implements CopyStrategy
         if (value instanceof List)
         {
             cacheObject.setType(1);
-            return ByteHelper.ListToByte(key.getData().getClassOrignal(), (List)value);
+            return ByteHelper.ListToByte(key.getData().getClassOrignal(), (List<?>)value);
         }
         else
         {

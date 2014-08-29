@@ -28,7 +28,6 @@ import org.python.core.PySingleton;
 import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
-@SuppressWarnings("unchecked")
 public class JythonFactory
 {
     
@@ -64,7 +63,7 @@ public class JythonFactory
         interpreter.exec(instanceName + objectDef);
         try
         {
-            Class JavaInterface = Class.forName(interfaceName);
+            Class<?> JavaInterface = Class.forName(interfaceName);
             javaObject = interpreter.get(instanceName).__tojava__(JavaInterface);
         }
         catch (ClassNotFoundException ex)
@@ -142,7 +141,7 @@ public class JythonFactory
         }
     }
     
-    public Object pyObjectToObject(PyObject pobj, Class c)
+    public Object pyObjectToObject(PyObject pobj, Class<?> c)
     {
         return pobj.__tojava__(c);
     }

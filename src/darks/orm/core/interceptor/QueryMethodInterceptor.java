@@ -36,7 +36,7 @@ import darks.orm.log.LoggerFactory;
 import darks.orm.util.StringHelper;
 
 /**
- * BEAN方法拦截类 作者:DarkShadow 版权:归夜影所有 时间:2011-12-25 版本:1.0.0
+ * Method interrupter used to Intercept {@linkplain darks.orm.annotation.Query Query} annotation
  */
 @SuppressWarnings("unchecked")
 public class QueryMethodInterceptor implements MethodInterceptor, Serializable

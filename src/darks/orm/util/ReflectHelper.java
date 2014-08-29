@@ -272,8 +272,7 @@ public final class ReflectHelper
      * @param method 原始方法
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public static FastMethod getFastMethod(Class clazz, String methodName, Class<?>... methodTypes)
+    public static FastMethod getFastMethod(Class<?> clazz, String methodName, Class<?>... methodTypes)
         throws SecurityException, NoSuchMethodException
     {
         FastClassData data = parseFastClass(clazz);
@@ -619,6 +618,27 @@ public final class ReflectHelper
         Field[] result = new Field[fields.size()];
         fields.toArray(result);
         return result;
+    }
+    
+    public static Object getFieldValue(Field field, Object target)
+    {
+    	boolean isAccess = field.isAccessible();
+        if (!isAccess)
+            field.setAccessible(true);
+    	try
+		{
+            return field.get(target);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+    	finally
+    	{
+            if (!isAccess)
+                field.setAccessible(isAccess);
+    	}
     }
     
     private static void getAllFields(List<Field> fields, Class<?> clazz)

@@ -42,7 +42,7 @@ public class AspectUpdateContext implements SimpleAspect
     /**
      * 根据aspectData创建处理实例
      * 
-     * @param espectData
+     * @param aspectData
      * @return
      */
     public UpdateAspectAdapter createUpdateAspect(AspectData aspectData)

@@ -111,4 +111,53 @@ public class StringHelper
         String head = type.substring(0, 1);
         return type.replaceFirst(head, head.toUpperCase());
     }
+    
+    /**
+     * Parse sqlmap interface parameters flag.such as #1  #user  user
+     * @param param Parameter value
+     * @return ParamFlag
+     */
+    public static ParamFlag parseParamFlag(String param)
+    {
+    	if (param == null)
+    	{
+    		return null;
+    	}
+    	param = param.trim();
+    	if ("".equals(param))
+    	{
+    		return null;
+    	}
+    	ParamFlag flag = new ParamFlag();
+		flag.name = param;
+		flag.type = ParamFlag.TYPE_NAME;
+    	if (param.startsWith(ParamFlag.PARAM_PREFFIX))
+    	{
+        	param = param.substring(ParamFlag.PARAM_PREFFIX.length()).trim();
+        	try
+    		{
+        		flag.index = Integer.parseInt(param) - 1;
+        		flag.type = ParamFlag.TYPE_INDEX;
+    		}
+    		catch (Exception e)
+    		{
+    		}
+    	}
+    	return flag;
+    }
+    
+    public static class ParamFlag
+    {
+    	public static final String PARAM_PREFFIX = "#";
+    	
+    	public static final int TYPE_INDEX = 1;
+    	
+    	public static final int TYPE_NAME = 2;
+    	
+    	public int index;
+    	
+    	public String name;
+    	
+    	public int type;
+    }
 }

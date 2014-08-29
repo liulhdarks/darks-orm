@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Query
+public @interface Select
 {
     
     /**
@@ -96,6 +96,21 @@ public @interface Query
      * The alias string used in cascade query
      */
     String alias() default "";
+    
+    /**
+     * The values string for select and constitude
+     */
+    String values() default "";
+    
+    /**
+     * The values string for select and constitude
+     */
+    String page() default "";
+    
+    /**
+     * The values string for select and constitude
+     */
+    String pageSize() default "";
     
     /**
      * If true, It will automatically use the global cache, if the global cache
