@@ -45,7 +45,7 @@ import darks.orm.core.session.SessionContext;
  * @version 1.0.0 v05/01/2012
  * @since JDK1.5
  */
-public class BaseDAO
+public class TemplateDAO
 {
     
     /**
@@ -58,7 +58,7 @@ public class BaseDAO
     /**
      * <Default constructor>
      */
-    public BaseDAO()
+    public TemplateDAO()
     {
         if (!SessionContext.isInited())
         {

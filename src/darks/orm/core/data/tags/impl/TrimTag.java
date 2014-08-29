@@ -38,18 +38,28 @@ public class TrimTag extends AbstractTag
 		{
 			if (prefixOverrides != null && !"".equals(prefixOverrides))
 			{
-				if (tmpBuf.indexOf(prefixOverrides) == 0)
-				{
-					tmpBuf.substring(prefixOverrides.length());
-				}
+	            String[] overrides = prefixOverrides.split("|");
+	            for (String override : overrides)
+	            {
+	                override = override.trim();
+	                if (tmpBuf.indexOf(override) == 0)
+	                {
+	                    tmpBuf.substring(override.length());
+	                }
+	            }
 			}
 			if (suffixOverrides != null && !"".equals(suffixOverrides))
 			{
-				int index = tmpBuf.lastIndexOf(suffixOverrides);
-				if (index == tmpBuf.length() - suffixOverrides.length())
-				{
-					tmpBuf.substring(0, index);
-				}
+				String[] overrides = suffixOverrides.split("|");
+                for (String override : overrides)
+                {
+                    override = override.trim();
+                    int index = tmpBuf.lastIndexOf(override);
+                    if (index == tmpBuf.length() - override.length())
+                    {
+                        tmpBuf.substring(override.length());
+                    }
+                }
 			}
 			if (suffix != null && !"".equals(suffix))
 			{
