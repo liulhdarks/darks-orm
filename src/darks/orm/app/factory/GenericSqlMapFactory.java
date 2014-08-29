@@ -36,7 +36,7 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 执行DDL语句
+     * Execute DDL statement
      */
     public void executeDDLMap()
     {
@@ -45,10 +45,10 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP更新
+     * SQLMAP update
      * 
-     * @param id SQLMAP编号
-     * @param params 注入参数(数组)
+     * @param id SQLMAP id
+     * @param params Inject parameters
      */
     public void update(String id, Object... params)
         throws Exception
@@ -58,12 +58,12 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 根据查询结果类型进行SQLMAP查询
+     * Query object by SqlMap way according the {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param id SQLMAP编号
-     * @param queryEnumType 查询结果类型枚举
-     * @param params 注入参数(数组)
-     * @return 对象
+     * @param id SQLMAP id
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object query(String id, QueryEnumType queryEnumType, Object... params)
@@ -73,13 +73,13 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 根据查询结果类型进行SQLMAP查询
+     * Query object by SqlMap way according the {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param id SQLMAP编号
-     * @param queryEnumType 查询结果类型枚举
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 对象
+     * @param id SQLMAP id
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param values Select type values. Used for <select> <constitute> tag type.
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object query(String id, QueryEnumType queryEnumType, Object[] values, Object[] params)
@@ -94,15 +94,15 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 根据查询结果类型进行SQLMAP查询
+     * Query object by SqlMap way according the {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param id SQLMAP编号
-     * @param queryEnumType 查询结果类型枚举
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @param page 当前页数
-     * @param pageSize 分页大小
-     * @return 对象
+     * @param id SQLMAP id
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param values Select type values. Used for <select> <constitute> tag type.
+     * @param params Inject parameters
+     * @param page Current page number
+     * @param pageSize Page size each page
+     * @return Result object
      * @throws Exception
      */
     public Object query(String id, QueryEnumType queryEnumType, int page, int pageSize, Object[] values, Object[] params)
@@ -113,11 +113,11 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP查询单个对象
+     * SQLMAP query single obejct
      * 
-     * @param id SQLMAP编号
-     * @param params 注入参数(数组)
-     * @return 单个对象
+     * @param id SQLMAP id
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryObject(String id, Object... params)
@@ -127,12 +127,12 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP查询单个对象
+     * SQLMAP query single obejct
      * 
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 单个对象
+     * @param id SQLMAP id
+     * @param values Select type values.Used for <select> <constitute> tags
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryObject(String id, Object[] values, Object[] params)
@@ -142,11 +142,11 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP查询列表对象
+     * SQLMAP query list object
      * 
-     * @param id SQLMAP编号
-     * @param params 注入参数(数组)
-     * @return 列表对象
+     * @param id SQLMAP id
+     * @param params Inject parameters
+     * @return List result
      * @throws Exception
      */
     public List<?> queryList(String id, Object... params)
@@ -156,12 +156,12 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP查询列表对象
+     * SQLMAP query list object
      * 
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 列表对象
+     * @param id SQLMAP id
+     * @param values Select type values.Used for<select> <constitute> tag
+     * @param params Inject parameters
+     * @return List result
      * @throws Exception
      */
     public List<?> queryList(String id, Object[] values, Object[] params)
@@ -171,11 +171,11 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP查询分页对象
+     * SQLMAP query page 
      * 
-     * @param id SQLMAP编号
-     * @param params 注入参数(数组)
-     * @return 分页对象
+     * @param id SQLMAP id
+     * @param params Inject parameters
+     * @return Page result object
      * @throws Exception
      */
     public Page<?> queryPageList(String id, int page, int pageSize, Object... params)
@@ -185,12 +185,12 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * SQLMAP查询分页对象
+     * SQLMAP query page 
      * 
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数(数组)
-     * @return 分页对象
+     * @param id SQLMAP id
+     * @param values Select type values.Used for<select> <constitute> tag
+     * @param params Inject parameters
+     * @return Page result object
      * @throws Exception
      */
     public Page<?> queryPageList(String id, int page, int pageSize, Object[] values, Object[] params)
@@ -200,12 +200,12 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 根据查询类型进行SQLMAP查询
+     * Query data by SQLMAP way according the {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param queryEnumType 查询类型枚举
-     * @param id SQLMAP编号
-     * @param params 注入参数
-     * @return 查询结果对象
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param id SQLMAP id
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryForType(QueryEnumType queryEnumType, String id, Object[] params)
@@ -215,13 +215,13 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 根据查询类型进行SQLMAP查询
+     * Query data by SQLMAP way according the {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param queryEnumType 查询类型枚举
-     * @param id SQLMAP编号
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数
-     * @return 查询结果对象
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param id SQLMAP id
+     * @param values Select type values.Used for <select> <constitute> tag
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryForType(QueryEnumType queryEnumType, String id, Object[] values, Object[] params)
@@ -231,15 +231,15 @@ public class GenericSqlMapFactory implements SqlMapFactory
     }
     
     /**
-     * 根据查询类型进行SQLMAP查询
+     * Query data by SQLMAP way according the {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
      * 
-     * @param queryEnumType 查询类型枚举
-     * @param id SQLMAP编号
-     * @param page 当前页数
-     * @param pageSize 分页大小
-     * @param values 选择类型值,用于<select> <constitute>标签类型
-     * @param params 注入参数
-     * @return 查询结果对象
+     * @param queryEnumType {@linkplain darks.orm.app.QueryEnumType QueryEnumType}
+     * @param id SQLMAP id
+     * @param page Current page
+     * @param pageSize Page size
+     * @param values Select type values.Used for <select> <constitute> tags
+     * @param params Inject parameters
+     * @return Result object
      * @throws Exception
      */
     public Object queryForType(QueryEnumType queryEnumType, String id, int page, int pageSize, Object[] values,

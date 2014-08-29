@@ -27,16 +27,7 @@ import darks.orm.core.data.xml.CacheConfigData;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
-/**
- * 
- * <一句话功能简述>
- * <功能详细描述>
- * 
- * @author  Administrator
- * @version  [版本号, 2013-6-27]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
- */
+
 @SuppressWarnings("unchecked")
 public class CacheConfiguration
 {
@@ -51,13 +42,25 @@ public class CacheConfiguration
         Auto, Manual
     }
     
-    private boolean useCache = false; // 是否使用缓存
+    /**
+     * whether using cache
+     */
+    private boolean useCache = false; 
     
-    private CacheConfigType cacheConfigType = CacheConfigType.Manual; // 全局缓存方式
+    /**
+     * Global cache type
+     */
+    private CacheConfigType cacheConfigType = CacheConfigType.Manual;
     
-    private String autoCacheId; // 默认缓存名称
+    /**
+     * Default auto-cache id
+     */
+    private String autoCacheId; 
     
-    private boolean synchronous = false; // 异步缓存
+    /**
+     * Whether cache data synchronous
+     */
+    private boolean synchronous = false; 
     
     private CacheConfigData appCacheData = null;
     
