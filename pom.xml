@@ -2,10 +2,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>darks.orm</groupId>
   <artifactId>darks-orm</artifactId>
-  <version>1.0.0-beta</version>
+  <version>1.0.0b</version>
   <name>Darks ORM</name>
   <description>Darks ORM framework</description>
   
+  <distributionManagement>
+		<repository>
+			<id>nexus-osc-thirdparty</id>
+			<name>Nexus osc thirdparty</name>
+			<url>http://maven.oschina.net/content/repositories/thirdparty/</url>
+		</repository>
+	</distributionManagement>
+	
   <dependencies>
   	<dependency>
 	  <groupId>org.slf4j</groupId>
