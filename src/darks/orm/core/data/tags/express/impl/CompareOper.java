@@ -1,3 +1,20 @@
+/**
+ * 
+ * Copyright 2014 The Darks ORM Project (Liu lihua)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package darks.orm.core.data.tags.express.impl;
 
 import java.util.LinkedList;
@@ -43,8 +60,12 @@ public abstract class CompareOper implements RPNOper
 		{
 			val2 = expParam.getParam((String) val2);
 		}
-		if (((val1 instanceof String) || val1 == null) 
-					&& ((val2 instanceof String) || val2 == null))
+		if (val1 == null || val2 == null)
+		{
+			result = compute(val1, val2);
+			stack.push(result);
+		}
+		else if ((val1 instanceof String) && (val2 instanceof String))
 		{
 			result = compute((String) val1, (String) val2);
 			stack.push(result);
@@ -89,4 +110,12 @@ public abstract class CompareOper implements RPNOper
 	 * @return 运算结果
 	 */
 	public abstract Boolean compute(long src, long desc);
+
+	/**
+	 * 运算
+	 * @param val1 源操作数
+	 * @param val2 目标操作数
+	 * @return 运算结果
+	 */
+	public abstract Boolean compute(Object src, Object desc);
 }

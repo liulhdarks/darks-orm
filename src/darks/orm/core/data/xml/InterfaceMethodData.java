@@ -28,6 +28,7 @@ import darks.orm.annotation.sqlmap.Select.QueryType;
 import darks.orm.annotation.sqlmap.Update;
 import darks.orm.app.QueryEnumType;
 import darks.orm.exceptions.SessionException;
+import darks.orm.util.SqlHelper;
 import darks.orm.util.StringHelper;
 import darks.orm.util.StringHelper.ParamFlag;
 
@@ -168,9 +169,10 @@ public class InterfaceMethodData
     
     public int getArgumentIndex(String argName)
     {
-        if (argumentsMap.containsKey(argName))
+    	Integer result = argumentsMap.get(argName);
+        if (result != null)
         {
-            return argumentsMap.get(argName);
+            return result;
         }
         return -1;
     }

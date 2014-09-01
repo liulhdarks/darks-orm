@@ -1,3 +1,20 @@
+/**
+ * 
+ * Copyright 2014 The Darks ORM Project (Liu lihua)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package darks.orm.core.data.tags.impl;
 
 import java.util.List;
@@ -34,42 +51,46 @@ public class TrimTag extends AbstractTag
 	{
 		StringBuilder tmpBuf = new StringBuilder();
 		super.computeSql(tmpBuf, params, data, prevValue);
-		if (tmpBuf.length() > 0)
+		String strTmp = tmpBuf.toString().trim();
+		if (strTmp.length() > 0)
 		{
 			if (prefixOverrides != null && !"".equals(prefixOverrides))
 			{
-	            String[] overrides = prefixOverrides.split("|");
+	            String[] overrides = prefixOverrides.split("\\|");
 	            for (String override : overrides)
 	            {
+	            	if ("".equals(override))
+	            		continue;
 	                override = override.trim();
-	                if (tmpBuf.indexOf(override) == 0)
+	                if (strTmp.toLowerCase().startsWith(override.toLowerCase()))
 	                {
-	                    tmpBuf.substring(override.length());
+	                	strTmp = strTmp.substring(override.length());
 	                }
 	            }
 			}
 			if (suffixOverrides != null && !"".equals(suffixOverrides))
 			{
-				String[] overrides = suffixOverrides.split("|");
+				String[] overrides = suffixOverrides.split("\\|");
                 for (String override : overrides)
                 {
+	            	if ("".equals(override))
+	            		continue;
                     override = override.trim();
-                    int index = tmpBuf.lastIndexOf(override);
-                    if (index == tmpBuf.length() - override.length())
+                    if (strTmp.toLowerCase().endsWith(override.toLowerCase()))
                     {
-                        tmpBuf.substring(override.length());
+                    	strTmp = strTmp.substring(0, strTmp.length() - override.length());
                     }
                 }
-			}
-			if (suffix != null && !"".equals(suffix))
-			{
-				tmpBuf.append(' ').append(suffix).append(' ');
 			}
 			if (prefix != null && !"".equals(prefix))
 			{
 				sqlBuf.append(' ').append(prefix).append(' ');
 			}
-			sqlBuf.append(tmpBuf);
+			sqlBuf.append(strTmp).append(' ');
+			if (suffix != null && !"".equals(suffix))
+			{
+				sqlBuf.append(' ').append(suffix).append(' ');
+			}
 		}
 		return null;
 	}

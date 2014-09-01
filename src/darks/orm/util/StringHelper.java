@@ -129,7 +129,6 @@ public class StringHelper
     		return null;
     	}
     	ParamFlag flag = new ParamFlag();
-		flag.name = param;
 		flag.type = ParamFlag.TYPE_NAME;
     	if (param.startsWith(ParamFlag.PARAM_PREFFIX))
     	{
@@ -143,6 +142,7 @@ public class StringHelper
     		{
     		}
     	}
+		flag.name = param;
     	return flag;
     }
     

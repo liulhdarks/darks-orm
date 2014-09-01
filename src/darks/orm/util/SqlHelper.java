@@ -27,6 +27,7 @@ import java.util.Map;
 
 import darks.orm.core.data.SqlParamData;
 import darks.orm.core.data.SqlParamData.SqlParamEnumType;
+import darks.orm.util.StringHelper.ParamFlag;
 
 public class SqlHelper
 {
@@ -281,5 +282,70 @@ public class SqlHelper
         }
         List<Object> list = buildSqlParams(dataList, argMap, args);
         return list.toArray();
+    }
+    
+    
+    public static Object getParamSubObject(List<Object> params, Map<String, Integer> argumentsMap, String path)
+    {
+    	ParamFlag flag = StringHelper.parseParamFlag(path);
+    	boolean existSub = false;
+    	Integer index = 0;
+    	if (flag.type == ParamFlag.TYPE_INDEX)
+    	{
+    		index = flag.index;
+    	}
+    	else
+    	{
+    		path = flag.name;
+        	if (path.indexOf(".") < 0)
+        	{
+        		index = argumentsMap.get(path);
+        	}
+        	else
+        	{
+            	String[] args = path.split("\\.");
+            	index = argumentsMap.get(args[0]);
+            	existSub = true;
+        	}
+    	}
+    	if (index == null || index >= params.size() || index < 0)
+    	{
+    		return null;
+    	}
+    	Object target = params.get(index);
+    	if (existSub)
+    	{
+    		target = getSubObject(target, path);
+    	}
+    	return target;
+    }
+    
+    public static Object getSubObject(Object source, String path)
+    {
+    	String[] args = path.split("\\.");
+    	return getSubObject(source, args);
+    }
+    
+    public static Object getSubObject(Object source, String[] args)
+    {
+    	int index = 0;
+    	Object result = source;
+    	for (String arg : args)
+    	{
+    		if ("".equals(arg))
+    		{
+    			continue;
+    		}
+    		if (index++ > 0)
+    		{
+    			if (result == null)
+    			{
+    				return null;
+    			}
+    			Field field = ReflectHelper.getAllField(result.getClass(), arg);
+    			result = ReflectHelper.getFieldValue(field, result);
+    		}
+    	}
+    	return result;
     }
 }
