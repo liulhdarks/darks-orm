@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT darks (dataSource*,useThreadLocal?,entitys?,cacheGroup?,sqlMapGroup?)>
+
+<!ELEMENT dataSource (property+,resultSet?)>
+<!ATTLIST dataSource type CDATA #REQUIRED>
+<!ATTLIST dataSource id CDATA #IMPLIED>
+<!ATTLIST dataSource main CDATA #IMPLIED>
+<!ATTLIST dataSource chainref CDATA #IMPLIED>
+
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA #REQUIRED>
+<!ATTLIST property value CDATA #REQUIRED>
+
+<!ELEMENT resultSet (#PCDATA)>
+<!ATTLIST resultSet type (forward|scroll) #IMPLIED>
+<!ATTLIST resultSet sensitive (true|false) #IMPLIED>
+<!ATTLIST resultSet concurrency (read|updatable) #IMPLIED>
+
+<!ELEMENT entitys (entity|package)*>
+
+<!ELEMENT entity EMPTY>
+<!ATTLIST entity class CDATA #REQUIRED>
+<!ATTLIST entity alias CDATA #IMPLIED>
+
+<!ELEMENT package EMPTY>
+<!ATTLIST package name CDATA #REQUIRED>
+
+<!ELEMENT useThreadLocal EMPTY>
+<!ATTLIST useThreadLocal use (true|false) #REQUIRED>
+
+<!ELEMENT sqlMapGroup (sqlMap*)>
+<!ELEMENT sqlMap (#PCDATA)>
+
+<!ELEMENT cacheGroup (appCache?,threadCache?,ehCache*)>
+<!ATTLIST cacheGroup use (true|false) #REQUIRED>
+<!ATTLIST cacheGroup type (auto|manual) #IMPLIED>
+<!ATTLIST cacheGroup cacheId CDATA #IMPLIED>
+<!ATTLIST cacheGroup synchronous (true|false) #IMPLIED>
+
+
+<!ELEMENT appCache EMPTY>
+<!ATTLIST appCache id CDATA #FIXED "application">
+<!ATTLIST appCache strategy (Fifo|Lru|SoftRef|WeakRef) #REQUIRED>
+<!ATTLIST appCache maxObject CDATA #REQUIRED>
+<!ATTLIST appCache idleTime CDATA "0">
+<!ATTLIST appCache liveTime CDATA "0">
+<!ATTLIST appCache eternal (true|false) "true">
+<!ATTLIST appCache entirety (true|false) "false">
+<!ATTLIST appCache copyStrategy (field|serial|ref) #IMPLIED>
+
+
+<!ELEMENT threadCache EMPTY>
+<!ATTLIST threadCache id CDATA #FIXED "thread">
+<!ATTLIST threadCache strategy (Fifo|Lru|SoftRef|WeakRef) #REQUIRED>
+<!ATTLIST threadCache maxObject CDATA #REQUIRED>
+<!ATTLIST threadCache eternal (true|false) "true">
+<!ATTLIST threadCache entirety (true|false) "false">
+<!ATTLIST threadCache copyStrategy (field|serial|ref) #IMPLIED>
+
+<!ELEMENT ehCache (configPath?)>
+<!ATTLIST ehCache id ID #REQUIRED>
+<!ATTLIST ehCache name CDATA #IMPLIED>
+<!ATTLIST ehCache maxElementsInMemory CDATA #IMPLIED>
+<!ATTLIST ehCache maxElementsOnDisk CDATA #IMPLIED>
+<!ATTLIST ehCache timeToIdleSeconds CDATA #IMPLIED>
+<!ATTLIST ehCache timeToLiveSeconds CDATA #IMPLIED>
+<!ATTLIST ehCache eternal (true|false) "true">
+<!ATTLIST ehCache overflowToDisk (true|false) "false">
+<!ATTLIST ehCache diskPersistent (true|false) "false">
+<!ATTLIST ehCache diskExpiryThreadIntervalSeconds CDATA #IMPLIED>
+<!ATTLIST ehCache memoryStoreEvictionPolicy CDATA #IMPLIED>
+
+<!ELEMENT configPath (#PCDATA)>

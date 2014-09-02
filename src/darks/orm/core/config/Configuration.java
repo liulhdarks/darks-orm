@@ -35,8 +35,6 @@ public class Configuration
     
     private DataSourceConfiguration mainDsConfig;
     
-    private LoggerConfiguration loggerConfig = new LoggerConfiguration();
-    
     private CacheConfiguration cacheConfig = new CacheConfiguration();
     
     private EntityConfiguration entityConfig = new EntityConfiguration();
@@ -103,11 +101,6 @@ public class Configuration
     public Collection<DataSourceConfiguration> getDataSourceConfigs()
     {
         return dsConfigs.values();
-    }
-    
-    public LoggerConfiguration Logger()
-    {
-        return loggerConfig;
     }
     
     public DataSourceConfiguration getMainDataSourceConfig()

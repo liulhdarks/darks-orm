@@ -17,6 +17,7 @@
 
 package darks.orm.core.session;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -59,10 +60,19 @@ public class SessionContext
     
     private static CacheContext cacheContext = null;
     
+
     /**
      * Build session context
      */
     public static void build()
+    {
+    	build(SessionConfigFactory.DEFAULT_CONFIG_PATH);
+    }
+    
+    /**
+     * Build session context
+     */
+    public static void build(String configLocation)
     {
         lock.lock();
         try
@@ -70,7 +80,7 @@ public class SessionContext
             if (configure == null || isInited == false)
             {
                 isInited = true;
-                Configuration config = SessionConfigFactory.getConfiguration();
+                Configuration config = SessionConfigFactory.getConfiguration(configLocation);
                 SessionContext.setConfigure(config);
                 initialize(config);
             }
@@ -84,9 +94,9 @@ public class SessionContext
     /**
      * Build session context
      * 
-     * @param cfgPath configuration file path
+     * @param ins configuration file inputstream
      */
-    public static void build(String cfgPath)
+    public static void build(InputStream ins)
     {
         lock.lock();
         try
@@ -94,7 +104,7 @@ public class SessionContext
             if (configure == null || isInited == false)
             {
                 isInited = true;
-                Configuration config = SessionConfigFactory.getConfiguration(cfgPath);
+                Configuration config = SessionConfigFactory.getConfiguration(ins);
                 SessionContext.setConfigure(config);
                 initialize(config);
             }

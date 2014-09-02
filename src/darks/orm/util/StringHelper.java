@@ -17,14 +17,19 @@
 
 package darks.orm.util;
 
+/**
+ * 
+ * String helper
+ *
+ */
 public class StringHelper
 {
     
     /**
-     * 去除每行无效字符
+     * Remove invalid characters
      * 
-     * @param s 字符串
-     * @return
+     * @param s String
+     * @return Valid characters
      */
     public static String lineTrim(String s)
     {
@@ -32,10 +37,10 @@ public class StringHelper
     }
     
     /**
-     * 去除每行无效字符
+     * Remove invalid characters each line
      * 
-     * @param s 字符串
-     * @return
+     * @param s String object
+     * @return Valid characters
      */
     public static String lineTrim(String s, String lineEx)
     {
@@ -101,15 +106,15 @@ public class StringHelper
     }
     
     /**
-     * 大写首字符
+     * Head character upper
      * 
-     * @param type 字符串
-     * @return
+     * @param s String
+     * @return String
      */
-    public static String upperHeadWord(String type)
+    public static String upperHeadWord(String s)
     {
-        String head = type.substring(0, 1);
-        return type.replaceFirst(head, head.toUpperCase());
+        String head = s.substring(0, 1);
+        return s.replaceFirst(head, head.toUpperCase());
     }
     
     /**

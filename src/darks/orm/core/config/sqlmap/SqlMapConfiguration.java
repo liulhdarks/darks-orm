@@ -17,8 +17,7 @@
 
 package darks.orm.core.config.sqlmap;
 
-import java.io.File;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +25,20 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import darks.orm.core.data.xml.DDLData;
-import darks.orm.core.data.xml.DMLData;
-import darks.orm.core.data.xml.DMLQueryData;
-import darks.orm.core.data.xml.DMLUpdateData;
-import darks.orm.core.data.xml.DMLData.DMLType;
-import darks.orm.log.Logger;
-import darks.orm.log.LoggerFactory;
-import darks.orm.util.FileHelper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+
+import darks.orm.core.data.tags.AbstractTag;
+import darks.orm.core.data.xml.DDLData;
+import darks.orm.core.data.xml.DMLData;
+import darks.orm.core.data.xml.DMLData.DMLType;
+import darks.orm.core.data.xml.DMLQueryData;
+import darks.orm.core.data.xml.DMLUpdateData;
+import darks.orm.exceptions.ConfigException;
+import darks.orm.log.Logger;
+import darks.orm.log.LoggerFactory;
+import darks.orm.util.XmlHelper;
 
 @SuppressWarnings("unchecked")
 public class SqlMapConfiguration
@@ -45,9 +46,15 @@ public class SqlMapConfiguration
     
     private static final Logger log = LoggerFactory.getLogger(SqlMapConfiguration.class);
     
+    private static final String DTD_PUBLIC_ID = "-//darks//DTD sqlmap 3.0//EN";
+    
+    private static final String CONFIG_DTD_PATH = "/darks/orm/core/config/sqlmap.dtd";
+    
     private ConcurrentMap<String, DDLData> ddlMap = new ConcurrentHashMap<String, DDLData>();
     
     private ConcurrentMap<String, DMLData> dmlMap = new ConcurrentHashMap<String, DMLData>();
+    
+    private ConcurrentMap<String, AbstractTag> tagsMap = new ConcurrentHashMap<String, AbstractTag>();
     
     private List<String> sqlMapCfgs;
     
@@ -82,8 +89,19 @@ public class SqlMapConfiguration
         dmlMap.put(id, dmlData);
     }
     
+    public void addTag(String id, AbstractTag tag)
+    {
+        tagsMap.put(id, tag);
+    }
+    
+    public AbstractTag getTag(String id)
+    {
+    	return tagsMap.get(id);
+    }
+    
     /**
-     * 通过ID获得DMLDATA
+     * Get {@linkplain darks.orm.core.data.xml.DMLData DMLData} by id
+     * @param id DML data id
      */
     public DMLData getDMLData(String id)
     {
@@ -95,9 +113,9 @@ public class SqlMapConfiguration
     }
     
     /**
-     * 通过路径列表加载SQLMAP配置文件
+     * Load sqlmap config files by path list
      * 
-     * @param sqlMapCfg
+     * @param sqlMapCfgs Path list
      * @throws Exception
      */
     public void loadSqlMap(List<String> sqlMapCfgs)
@@ -111,31 +129,31 @@ public class SqlMapConfiguration
     }
     
     /**
-     * 通过路径加载SQLMAP配置文件
+     * Load sqlmap config file by path
      * 
-     * @param sqlMapCfg
+     * @param sqlMapCfg sqlmap config file path
      * @throws DocumentException
-     * @throws Exception
      */
     public void loadSqlMap(String sqlMapCfg)
         throws DocumentException
     {
         if (!sqlMapCfg.startsWith("/"))
             sqlMapCfg = "/" + sqlMapCfg;
-        URL url = getClass().getResource(sqlMapCfg);
-        if (url == null)
+        InputStream cfgIns = getClass().getResourceAsStream(sqlMapCfg);
+        if (cfgIns == null)
         {
-            log.error("[SQLMAP]'" + sqlMapCfg + "' configure file does not exists.");
+            log.error("[SQLMAP]'" + sqlMapCfg + "' configuration file does not exists.");
             return;
         }
         else
         {
-            log.debug("[SQLMAP]Load '" + sqlMapCfg + "' configure file ['" + url.toString() + "']");
+            log.debug("[SQLMAP]Load '" + sqlMapCfg + "' sqlmap configuration file");
         }
-        String cfgPath = FileHelper.getResourcePath(sqlMapCfg);
-        File f = new File(cfgPath);
-        SAXReader reader = new SAXReader();
-        Document doc = reader.read(f);
+        Document doc = XmlHelper.getXMLDocument(DTD_PUBLIC_ID, CONFIG_DTD_PATH, cfgIns);
+        if (doc == null)
+        {
+        	throw new ConfigException("Fail to parse sqlmap config file. Cause invalid config file.");
+        }
         Element root = doc.getRootElement();
         for (Iterator<Element> it = root.elementIterator(); it.hasNext();)
         {
@@ -149,7 +167,7 @@ public class SqlMapConfiguration
                 }
                 else if ("DML".equalsIgnoreCase(name))
                 {
-                    dmlReader.reader(el, f);
+                    dmlReader.reader(el);
                 }
             }
             catch (Exception e)
@@ -160,7 +178,7 @@ public class SqlMapConfiguration
     }
     
     /**
-     * 输出SQLMAP配置信息
+     * debug SQLMAP config info
      */
     public void outputSqlMapCfgInfo()
     {

@@ -17,6 +17,8 @@
 
 package darks.orm.core.factory;
 
+import java.io.InputStream;
+
 import darks.orm.app.SqlSession;
 import darks.orm.core.SqlBeanSession;
 import darks.orm.core.SqlJdbcSession;
@@ -69,7 +71,7 @@ public final class SqlSessionFactory
     /**
      * Initialize SqlSessionFactory configuration
      */
-    private static void initialize()
+    public static void initialize()
     {
         if (SessionContext.getConfigure() == null || !SessionContext.isInited())
         {
@@ -87,6 +89,32 @@ public final class SqlSessionFactory
         if (SessionContext.getConfigure() == null || !SessionContext.isInited())
         {
             SessionContext.build(cfg);
+        }
+    }
+    
+    /**
+     * Initialize SqlSessionFactory configuration
+     * 
+     * @param configLocation Configuration file path
+     */
+    public static void initialize(String configLocation)
+    {
+        if (SessionContext.getConfigure() == null || !SessionContext.isInited())
+        {
+            SessionContext.build(configLocation);
+        }
+    }
+    
+    /**
+     * Initialize SqlSessionFactory configuration
+     * 
+     * @param cfgInputStream Configuration file inputstream
+     */
+    public static void initialize(InputStream cfgInputStream)
+    {
+        if (SessionContext.getConfigure() == null || !SessionContext.isInited())
+        {
+            SessionContext.build(cfgInputStream);
         }
     }
     

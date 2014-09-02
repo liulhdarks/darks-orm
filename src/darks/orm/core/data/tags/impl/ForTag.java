@@ -56,25 +56,18 @@ public class ForTag extends AbstractTag
 		ExpressParam expParam = new ExpressParam(params, data);
 		@SuppressWarnings("unchecked")
 		Collection<Object> col = (Collection<Object>)expParam.getParam(collection);
-//		Integer index = data.getArgumentIndex(collection);
-//		if (index == null)
-//		{
-//			return null;
-//		}
-//		@SuppressWarnings("unchecked")
-//		Collection<Object> col = (Collection<Object>)params.get(index);
 		int i = params.size();
 		sqlBuf.append(open);
 		for (Object obj : col)
 		{
 			params.add(obj);
+			String itemKey = item + i;
+			String key = "#" + itemKey;
+			data.addArgument(i, itemKey);
 			StringBuilder buf = new StringBuilder();
 			super.computeSql(buf, params, data, prevValue);
 			String p = buf.toString();
-			String itemKey = item + i;
-			String key = "#" + itemKey;
 			key = p.replace("#" + item, key).trim();
-			data.addArgument(i, itemKey);
 			sqlBuf.append(key).append(separator);
 			i++;
 		}

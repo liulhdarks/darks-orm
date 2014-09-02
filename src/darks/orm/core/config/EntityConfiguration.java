@@ -62,6 +62,7 @@ public class EntityConfiguration
         else
         {
             entityMap.put(alias, clazz);
+            entityMap.put(alias.toLowerCase(), clazz);
             entityMap.put(className, clazz);
         }
         return clazz;
@@ -74,6 +75,15 @@ public class EntityConfiguration
     
     public Class<?> getEntity(String key)
     {
-        return entityMap.get(key);
+    	if (key == null || "".equals(key))
+    	{
+    		return null;
+    	}
+    	Class<?> clazz = entityMap.get(key);
+    	if (clazz == null)
+    	{
+    		clazz = entityMap.get(key.toLowerCase());
+    	}
+    	return clazz;
     }
 }

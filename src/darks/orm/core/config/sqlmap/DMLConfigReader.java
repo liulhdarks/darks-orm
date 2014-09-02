@@ -17,7 +17,6 @@
 
 package darks.orm.core.config.sqlmap;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class DMLConfigReader
 	 * 
 	 * @param element Xml element
 	 */
-	public void reader(Element element, File file)
+	public void reader(Element element)
 	{
 		String namesp = element.attributeValue("namespace");
 		if (namesp == null)
@@ -75,11 +74,15 @@ public class DMLConfigReader
 				String name = el.getName().trim();
 				if ("Query".equalsIgnoreCase(name))
 				{
-					readQuery(el, file, namesp);
+					readQuery(el, namesp);
 				}
 				else if ("Update".equalsIgnoreCase(name))
 				{
-					readUpdate(el, file, namesp);
+					readUpdate(el, namesp);
+				}
+				else if ("tag".equalsIgnoreCase(name))
+				{
+					readTag(el, namesp);
 				}
 			}
 		}
@@ -90,13 +93,43 @@ public class DMLConfigReader
 	}
 
 	/**
+	 * Read and parse extern tags
+	 * 
+	 * @param element tag element
+	 * @param namesp namespace
+	 * @throws Exception 
+	 */
+	private void readTag(Element element, String namesp) throws Exception
+	{
+		String id = element.attributeValue("id");
+		if (id == null || "".equals(id.trim()))
+		{
+			return;
+		}
+		RootTag rootTag = new RootTag();
+		if (!"".equals(namesp))
+		{
+			if (!namesp.endsWith("."))
+				namesp += ".";
+		}
+		parseSqlTag(rootTag, element, namesp);
+		sqlMapConfig.addTag(namesp + id, rootTag);
+	}
+
+	/**
 	 * Read and parse query tags
 	 * 
 	 * @param element Query tag element
+	 * @param namesp namespace
 	 * @throws Exception 
 	 */
-	private DMLData readQuery(Element element, File file, String namesp) throws Exception
+	private DMLData readQuery(Element element, String namesp) throws Exception
 	{
+		if (!"".equals(namesp))
+		{
+			if (!namesp.endsWith("."))
+				namesp += ".";
+		}
 		DMLData dmlData = new DMLData();
 		dmlData.setType(DMLType.Query);
 		DMLQueryData queryData = new DMLQueryData();
@@ -123,7 +156,7 @@ public class DMLConfigReader
 			return null;
 
 		RootTag rootTag = new RootTag();
-		parseSqlTag(rootTag, element);
+		parseSqlTag(rootTag, element, namesp);
 		dmlData.setSqlTag(rootTag);
 		String sql = element.getTextTrim();
 		if (sql != null && !"".equals(sql))
@@ -143,11 +176,6 @@ public class DMLConfigReader
 		}
 		AspectData aspectData = parseAspectXml(element);
 		queryData.setAspectData(aspectData);
-		if (!"".equals(namesp))
-		{
-			if (!namesp.endsWith("."))
-				namesp += ".";
-		}
 		sqlMapConfig.addDMLData(namesp + dmlData.getId(), dmlData);
 		return dmlData;
 	}
@@ -248,7 +276,6 @@ public class DMLConfigReader
 			String exsql = item.getTextTrim();
 			if (exsql == null)
 				exsql = "";
-			// queryData.addSQL(value, sql +" "+ exsql);
 			queryData.addSQL(value, exsql);
 		}
 		return true;
@@ -297,17 +324,23 @@ public class DMLConfigReader
 	 * Read and parse update tags
 	 * 
 	 * @param element Update tag
+	 * @param namesp namespace
 	 * @throws Exception 
 	 */
-	private DMLData readUpdate(Element element, File file, String namesp) throws Exception
+	private DMLData readUpdate(Element element, String namesp) throws Exception
 	{
+		if (!"".equals(namesp))
+		{
+			if (!namesp.endsWith("."))
+				namesp += ".";
+		}
 		DMLData dmlData = new DMLData();
 		String sql = element.getTextTrim();
 		dmlData.setType(DMLType.Update);
 		DMLUpdateData updateData = new DMLUpdateData();
 
 		RootTag rootTag = new RootTag();
-		parseSqlTag(rootTag, element);
+		parseSqlTag(rootTag, element, namesp);
 		dmlData.setSqlTag(rootTag);
 		updateData.setSql(sql);
 		for (Iterator<Attribute> it = element.attributeIterator(); it.hasNext();)
@@ -332,11 +365,6 @@ public class DMLConfigReader
 		AspectData aspectData = parseAspectXml(element);
 		updateData.setAspectData(aspectData);
 		dmlData.setUpdateData(updateData);
-		if (!"".equals(namesp))
-		{
-			if (!namesp.endsWith("."))
-				namesp += ".";
-		}
 		sqlMapConfig.addDMLData(namesp + dmlData.getId(), dmlData);
 		return dmlData;
 	}
@@ -421,7 +449,7 @@ public class DMLConfigReader
 		return null;
 	}
 
-	private void parseSqlTag(AbstractTag parent, Element el) throws Exception
+	private void parseSqlTag(AbstractTag parent, Element el, String namesp) throws Exception
 	{
 		AbstractTag prevTag = null;
 		List<Node> list = el.content();
@@ -433,17 +461,9 @@ public class DMLConfigReader
 			{
 			case Node.ELEMENT_NODE:
 				Element childEl = (Element) node;
-				AbstractTag childTag = TagsFactory.createTag(childEl, prevTag);
-				if (childTag != null)
-				{
-					if (childTag.parseElement(childEl))
-					{
-						prevTag = childTag;
-						parent.addChild(childTag);
-						parseSqlTag(childTag, childEl);
-					}
-				}
+				prevTag = parseElementTag(parent, node, childEl, namesp, prevTag);
 				break;
+			case Node.CDATA_SECTION_NODE:
 			case Node.TEXT_NODE:
 				String text = node.getText().replaceAll("\n|\t", " ").trim();
 				if (!"".equals(text))
@@ -455,6 +475,38 @@ public class DMLConfigReader
 				break;
 			}
 		}
+	}
+	
+	private AbstractTag parseElementTag(AbstractTag parent, Node node, Element childEl, String namesp, AbstractTag prevTag) throws Exception
+	{
+		if ("include".equals(node.getName()))
+		{
+			String id = childEl.attributeValue("refid");
+			if (id.indexOf(".") < 0)
+			{
+				id = namesp + id;
+			}
+			AbstractTag externTag = sqlMapConfig.getTag(id); 
+			if (externTag != null)
+			{
+				prevTag = externTag;
+				parent.addChild(externTag);
+			}
+		}
+		else
+		{
+			AbstractTag childTag = TagsFactory.createTag(childEl, prevTag);
+			if (childTag != null)
+			{
+				if (childTag.parseElement(childEl))
+				{
+					prevTag = childTag;
+					parent.addChild(childTag);
+					parseSqlTag(childTag, childEl, namesp);
+				}
+			}
+		}
+		return prevTag;
 	}
 
 	public SqlMapConfiguration getSqlMapConfig()

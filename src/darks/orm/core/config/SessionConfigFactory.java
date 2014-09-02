@@ -17,18 +17,15 @@
 
 package darks.orm.core.config;
 
-import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
 import darks.orm.core.config.CacheConfiguration.CacheConfigType;
 import darks.orm.exceptions.ClassReflectException;
@@ -37,15 +34,22 @@ import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.FileHelper;
 import darks.orm.util.ReflectHelper;
+import darks.orm.util.XmlHelper;
 
+/**
+ * Session config factory will build ORM config environment from config file.
+ * @author darks
+ */
 public final class SessionConfigFactory
 {
     
     private static final Logger logger = LoggerFactory.getLogger(SessionConfigFactory.class);
     
-    private static final String DEFAULT_CONFIG_PATH = "/darks.xml";
+    public static final String DEFAULT_CONFIG_PATH = "/darks.xml";
     
-    private static final String DEFAULT_CONFIG_NAMESPACE = "http://www.darks.org/schema/darks";
+    private static final String DTD_PUBLIC_ID = "-//darks//DTD darks 3.0//EN";
+    
+    private static final String CONFIG_DTD_PATH = "/darks/orm/core/config/darks.dtd";
     
     private static Map<String, Class<?>> configMap = new HashMap<String, Class<?>>(3);
     
@@ -60,78 +64,79 @@ public final class SessionConfigFactory
     {
         
     }
-    
+
     /**
-     * 获取配置文件实例
+     * Get config file entity from file.
      * 
-     * @return 配置文件实例
+     * @return Config file entity
      * @throws ConfigException
      */
     public static Configuration getConfiguration()
-        throws ConfigException
+    				throws ConfigException
     {
-        URL url = SessionConfigFactory.class.getResource(DEFAULT_CONFIG_PATH);
-        if (url == null)
-        {
-            throw new ConfigException("'" + DEFAULT_CONFIG_PATH + "' configuration file does not exists.");
-        }
-        else
-        {
-            logger.debug("Load '" + DEFAULT_CONFIG_PATH + "' configure file ['" + url.toString() + "']");
-        }
-        String path = url.getFile();
-        path = path.replace("%20", " ");
-        return getConfiguration(path);
+    	return getConfiguration(DEFAULT_CONFIG_PATH);
     }
     
     /**
-     * 获取配置文件实例
+     * Get config file entity from file.
      * 
-     * @param configPath 配置文件路径
-     * @return 配置文件实例
+     * @param configLocation Config file location
+     * @return Config file entity
      * @throws ConfigException
      */
-    public static Configuration getConfiguration(String configPath)
+    public static Configuration getConfiguration(String configLocation)
+        throws ConfigException
+    {
+    	if (configLocation == null)
+    	{
+    		throw new ConfigException("ConfigLocation is null.");
+    	}
+    	InputStream cfgIns = SessionConfigFactory.class.getResourceAsStream(configLocation);
+        if (cfgIns == null)
+        {
+            throw new ConfigException("'" + configLocation + "' configuration file does not exists.");
+        }
+        return getConfiguration(cfgIns);
+    }
+    
+    /**
+     * Get config file entity from file.
+     * 
+     * @param configPath Config file path
+     * @return Config file entity
+     * @throws ConfigException
+     */
+    public static Configuration getConfiguration(InputStream cfgIns)
         throws ConfigException
     {
         Configuration cfg = new Configuration();
-        try
+        Document doc = XmlHelper.getXMLDocument(DTD_PUBLIC_ID, CONFIG_DTD_PATH, cfgIns);
+        if (doc == null)
         {
-            File f = new File(configPath);
-            SAXReader reader = new SAXReader();
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("d", DEFAULT_CONFIG_NAMESPACE);
-            reader.getDocumentFactory().setXPathNamespaceURIs(map);
-            Document doc = reader.read(f);
-            // 解析DataSource
-            parseDataSourceXpath(doc, cfg);
-            // 解析日志配置
-            parseLoggerXpath(doc, cfg);
-            // 解析实体配置
-            parseEntityXpath(doc, cfg);
-            // 解析SqlMap路径配置
-            parseSqlMapXpath(doc, cfg);
-            // 解析缓存配置
-            parseCacheXpath(doc, cfg);
+        	throw new ConfigException("Fail to parse config file. Cause invalid config file.");
         }
-        catch (DocumentException e)
-        {
-            throw new ConfigException("fail to read document'" + configPath + "' configuration file.");
-        }
+        // Parse DataSource
+        parseDataSourceXpath(doc, cfg);
+        // Parse entity config
+        parseEntityXpath(doc, cfg);
+        // Parse SqlMap path config
+        parseSqlMapXpath(doc, cfg);
+        // Parse cache config
+        parseCacheXpath(doc, cfg);
         return cfg;
     }
     
     /**
-     * 解析DataSource配置
+     * Parse DataSource config
      * 
      * @param doc Document
-     * @param cfg Configuration配置
+     * @param cfg Configuration config
      * @throws ConfigException
      */
     private static void parseDataSourceXpath(Document doc, Configuration cfg)
         throws ConfigException
     {
-        String xpath = "/d:darks/d:dataSource[@type]";
+        String xpath = "/darks/dataSource[@type]";
         List<?> nodes = doc.selectNodes(xpath);
         Iterator<?> it = nodes.iterator();
         while (it.hasNext())
@@ -144,10 +149,10 @@ public final class SessionConfigFactory
     }
     
     /**
-     * 解析DataSource单个元素
+     * Parse DataSource single element
      * 
-     * @param node XML元素节点
-     * @param cfg Configuration配置
+     * @param node XML element node
+     * @param cfg Configuration config
      * @throws ConfigException
      */
     private static void parseDataSourceNode(Element node, Configuration cfg)
@@ -188,7 +193,7 @@ public final class SessionConfigFactory
             {
                 dsConfig.setNextId(chainref);
             }
-            List<?> nodes = node.selectNodes("d:property[@name][@value]");
+            List<?> nodes = node.selectNodes("property[@name][@value]");
             Iterator<?> it = nodes.iterator();
             Element el = null;
             Field field = null;
@@ -200,7 +205,7 @@ public final class SessionConfigFactory
                 field = ReflectHelper.getField(clazz, name);
                 ReflectHelper.setFieldString(field, dsConfig, value);
             }
-            el = (Element)node.selectSingleNode("d:resultSet");
+            el = (Element)node.selectSingleNode("resultSet");
             if (el != null)
             {
                 ResultSetConfig rsconfig = dsConfig.getResultSetConfig();
@@ -224,84 +229,64 @@ public final class SessionConfigFactory
     }
     
     /**
-     * 解析Logger配置
+     * Parse entity config
      * 
      * @param doc Document
-     * @param cfg Configuration配置
-     * @throws ConfigException
-     */
-    private static void parseLoggerXpath(Document doc, Configuration cfg)
-        throws ConfigException
-    {
-        String xpath = "/d:darks/d:logger";
-        Element node = (Element)doc.selectSingleNode(xpath);
-        if (node == null)
-            return;
-        Element showSqlNode = (Element)node.selectSingleNode("d:showSql");
-        Element showLogNode = (Element)node.selectSingleNode("d:showLog");
-        Element writeLogNode = (Element)node.selectSingleNode("d:writeLog");
-        LoggerConfiguration config = cfg.Logger();
-        if (showSqlNode != null)
-        {
-            String val = showSqlNode.getTextTrim();
-            config.setShowSql(Boolean.parseBoolean(val));
-        }
-        if (showLogNode != null)
-        {
-            String val = showLogNode.getTextTrim();
-            config.setShowLog(Boolean.parseBoolean(val));
-        }
-        if (writeLogNode != null)
-        {
-            String val = writeLogNode.getTextTrim();
-            config.setWriteLog(Boolean.parseBoolean(val));
-        }
-    }
-    
-    /**
-     * 解析实体配置
-     * 
-     * @param doc Document
-     * @param cfg Configuration配置
+     * @param cfg Configuration config
      * @throws ConfigException
      */
     private static void parseEntityXpath(Document doc, Configuration cfg)
         throws ConfigException
     {
         EntityConfiguration entityConfig = cfg.getEntityConfig();
-        String xpath = "/d:darks/d:entitys";
+        String xpath = "/darks/entitys";
         Element node = (Element)doc.selectSingleNode(xpath);
         if (node == null)
             return;
-        List<?> nodes = node.selectNodes("d:entity[@class]");
+        List<?> nodes = node.selectNodes("entity[@class]");
         Iterator<?> it = nodes.iterator();
         while (it.hasNext())
         {
             Element el = (Element)it.next();
             String alias = el.attributeValue("alias");
             String className = el.attributeValue("class");
-            if (className == null)
+            if (className == null || "".equals(className))
                 continue;
             entityConfig.addEntityConfig(alias, className);
+        }
+        
+        nodes = node.selectNodes("package[@name]");
+        it = nodes.iterator();
+        while (it.hasNext())
+        {
+            Element el = (Element)it.next();
+            String pkgName = el.attributeValue("name");
+            if (pkgName == null || "".equals(pkgName))
+                continue;
+            List<Class<?>> classList = ReflectHelper.scanPackageClasses(pkgName, true);
+            for (Class<?> clazz : classList)
+            {
+                entityConfig.addEntityConfig(clazz.getSimpleName(), clazz.getName());
+            }
         }
     }
     
     /**
-     * 解析SqlMap配置
+     * Parse SqlMap config
      * 
      * @param doc Document
-     * @param cfg Configuration配置
+     * @param cfg Configuration config
      * @throws ConfigException
      */
     private static void parseSqlMapXpath(Document doc, Configuration cfg)
         throws ConfigException
     {
         List<String> sqlMapsPath = cfg.getSqlMapsPath();
-        String xpath = "/d:darks/d:sqlMapGroup";
+        String xpath = "/darks/sqlMapGroup";
         Element node = (Element)doc.selectSingleNode(xpath);
         if (node == null)
             return;
-        List<?> nodes = node.selectNodes("d:sqlMap");
+        List<?> nodes = node.selectNodes("sqlMap");
         Iterator<?> it = nodes.iterator();
         while (it.hasNext())
         {
@@ -326,17 +311,17 @@ public final class SessionConfigFactory
     }
     
     /**
-     * 解析缓存配置
+     * Parse cache config
      * 
      * @param doc Document
-     * @param cfg Configuration配置
+     * @param cfg Configuration config
      * @throws ConfigException
      */
     private static void parseCacheXpath(Document doc, Configuration cfg)
         throws ConfigException
     {
         CacheConfiguration cacheConfig = cfg.getCacheConfig();
-        String xpath = "/d:darks/d:cacheGroup";
+        String xpath = "/darks/cacheGroup";
         Element node = (Element)doc.selectSingleNode(xpath);
         if (node == null)
             return;
@@ -344,7 +329,7 @@ public final class SessionConfigFactory
         String type = node.attributeValue("type");
         String cacheId = node.attributeValue("cacheId");
         String synchronous = node.attributeValue("synchronous");
-        // 是否使用缓存
+        // Whether to use cache
         if (use != null)
         {
             if ("true".equalsIgnoreCase(use))
@@ -352,7 +337,7 @@ public final class SessionConfigFactory
             else if ("false".equalsIgnoreCase(use))
                 cacheConfig.setUseCache(false);
         }
-        // 使用类型 自动/手动
+        // Cache type
         if (type != null)
         {
             if ("auto".equals(type))
@@ -360,12 +345,12 @@ public final class SessionConfigFactory
             else if ("manual".equals(type))
                 cacheConfig.setCacheConfigType(CacheConfigType.Manual);
         }
-        // 自动缓存编号
+        // Parse cache auto-id
         if (cacheId != null)
         {
             cacheConfig.setAutoCacheId(cacheId);
         }
-        // 是否异步缓存
+        // Whether synchronous cache
         if (synchronous != null)
         {
             if ("true".equalsIgnoreCase(synchronous))

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!ELEMENT SqlMap (DML? | DDL?)>
+
+<!ELEMENT DML (Query | Update | tag)*>
+<!ATTLIST DML namespace CDATA #REQUIRED>
+
+<!ELEMENT DDL (create*)>
+<!ATTLIST DDL schema CDATA #IMPLIED>
+<!ATTLIST DDL catalog CDATA #IMPLIED>
+
+<!ELEMENT create (#PCDATA)>
+<!ATTLIST create id ID #IMPLIED>
+<!ATTLIST create tableName CDATA #REQUIRED>
+<!ATTLIST create autoRunable (true|false)  #IMPLIED>
+<!ATTLIST create checkTable (true|false)  #IMPLIED>
+
+<!ELEMENT tag (#PCDATA)>
+<!ATTLIST tag id ID #REQUIRED>
+
+<!ELEMENT include EMPTY>
+<!ATTLIST include refid IDREF #REQUIRED>
+
+<!ELEMENT Query (#PCDATA | if | where | foreach | trim | elseif | else | select | aspect | query | constitute | include)*>
+<!ATTLIST Query id ID #REQUIRED>
+<!ATTLIST Query queryType (auto|object|list|page) "auto">
+<!ATTLIST Query resultType CDATA #REQUIRED>
+<!ATTLIST Query autoCascade (true|false)  #IMPLIED>
+<!ATTLIST Query alias CDATA #IMPLIED>
+<!ATTLIST Query attribute CDATA #IMPLIED>
+<!ATTLIST Query parametersMap CDATA #IMPLIED>
+<!ATTLIST Query page CDATA #IMPLIED>
+<!ATTLIST Query pageSize CDATA #IMPLIED>
+<!ATTLIST Query values CDATA #IMPLIED>
+<!ATTLIST Query cache (auto|manual)  #IMPLIED>
+<!ATTLIST Query cacheId CDATA #IMPLIED>
+
+<!ELEMENT Update (#PCDATA | if | where | foreach | trim | elseif | else | set | include)*>
+<!ATTLIST Update id ID #REQUIRED>
+
+<!ELEMENT Create (#PCDATA)>
+
+<!ELEMENT if (#PCDATA | if | where | foreach | trim | elseif | else | set | include)*>
+<!ATTLIST if test CDATA #REQUIRED>
+
+<!ELEMENT elseif (#PCDATA | if | where | foreach | trim | elseif | else | set | include)*>
+<!ATTLIST elseif test CDATA #REQUIRED>
+
+<!ELEMENT else (#PCDATA | if | where | foreach | trim | elseif | else | set | include)*>
+
+<!ELEMENT foreach (#PCDATA | if | foreach | trim | elseif | else | include)*>
+<!ATTLIST foreach item CDATA #REQUIRED>
+<!ATTLIST foreach collection CDATA #REQUIRED>
+<!ATTLIST foreach open CDATA #REQUIRED>
+<!ATTLIST foreach separator CDATA #REQUIRED>
+<!ATTLIST foreach close CDATA #REQUIRED>
+
+<!ELEMENT trim (#PCDATA | if | foreach | trim | elseif | else | include)*>
+<!ATTLIST trim prefix CDATA #IMPLIED>
+<!ATTLIST trim prefixOverrides CDATA #IMPLIED>
+<!ATTLIST trim suffix CDATA #IMPLIED>
+<!ATTLIST trim suffixOverrides CDATA #IMPLIED>
+
+<!ELEMENT where (#PCDATA | if | foreach | trim | elseif | else | include)*>
+
+<!ELEMENT set (#PCDATA | if | foreach | trim | elseif | else | include)*>
+
+<!ELEMENT aspect (jython | pyfile | javaClass | javascript | jsfile | include)>
+
+<!ELEMENT jython (#PCDATA | before | after)*>
+<!ATTLIST jython className CDATA #IMPLIED>
+
+<!ELEMENT pyfile (#PCDATA)>
+<!ATTLIST pyfile className CDATA #IMPLIED>
+
+<!ELEMENT javaClass (#PCDATA)>
+
+<!ELEMENT javascript (#PCDATA)>
+
+<!ELEMENT jsfile (#PCDATA)>
+
+<!ELEMENT query (#PCDATA)>
+
+<!ELEMENT select (#PCDATA | select)*>
+<!ATTLIST select value CDATA #REQUIRED>
+
+<!ELEMENT constitute (item*)>
+
+<!ELEMENT item (#PCDATA)>
+<!ATTLIST item value CDATA #REQUIRED>
+
+<!ELEMENT before (#PCDATA)>
+<!ELEMENT after (#PCDATA)>
