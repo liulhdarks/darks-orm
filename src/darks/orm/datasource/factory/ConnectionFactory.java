@@ -48,6 +48,7 @@ public class ConnectionFactory
         handlers.put("jdbc", JdbcConnectionFactory.class);
         handlers.put("bonecp", BoneCPConnectionFactory.class);
         handlers.put("jndi", JndiConnectionFactory.class);
+        handlers.put("spring", SpringConnectionFactory.class);
     }
     
     private ConnectionFactory()
@@ -64,20 +65,23 @@ public class ConnectionFactory
         SessionContext.build();
         Configuration cfg = SessionContext.getConfigure();
         DataSourceConfiguration dsc = cfg.getMainDataSourceConfig();
-        currentDataSourceConfig = dsc;
-        Class<? extends ConnectionHandler> clazz = handlers.get(dsc.getType());
-        factory = ReflectHelper.newInstance(clazz);
-        factory.setDataSourceConfig(dsc);
-        ConnectionHandler handler = factory;
-        ConnectionHandler newhandler = null;
-        while (dsc.getNext() != null)
+        if (dsc != null)
         {
-            dsc = dsc.getNext();
-            clazz = handlers.get(dsc.getType());
-            newhandler = ReflectHelper.newInstance(clazz);
-            newhandler.setDataSourceConfig(dsc);
-            handler.setHandler(newhandler);
-            handler = newhandler;
+            currentDataSourceConfig = dsc;
+            Class<? extends ConnectionHandler> clazz = handlers.get(dsc.getType());
+            factory = ReflectHelper.newInstance(clazz);
+            factory.setDataSourceConfig(dsc);
+            ConnectionHandler handler = factory;
+            ConnectionHandler newhandler = null;
+            while (dsc.getNext() != null)
+            {
+                dsc = dsc.getNext();
+                clazz = handlers.get(dsc.getType());
+                newhandler = ReflectHelper.newInstance(clazz);
+                newhandler.setDataSourceConfig(dsc);
+                handler.setHandler(newhandler);
+                handler = newhandler;
+            }
         }
     }
     
@@ -121,10 +125,6 @@ public class ConnectionFactory
     {
         if (!withThreadLocal)
         {
-            if (DataSourceFactory.getInstance().isVaild())
-            {
-                return DataSourceFactory.getInstance().getConnection();
-            }
             Connection conn = factory.getConnection();
             if (conn == null)
                 return null;
@@ -136,15 +136,9 @@ public class ConnectionFactory
         boolean isClosed = JdbcHelper.isConnectionClosed(con);
         if (isClosed)
         {
-            con = null;
-            if (DataSourceFactory.getInstance().isVaild())
-            {
-                con = DataSourceFactory.getInstance().getConnection();
-            }
-            else
-            {
-                con = factory.getConnection();
-            }
+            con =  factory.getConnection();
+            if (con == null)
+                return null;
             ProxyConnection proxy = new ProxyConnection(con);
             con = proxy;
             connThreadLocal.set(con);
@@ -184,6 +178,10 @@ public class ConnectionFactory
     
     public ResultSetConfig getCurrentResultSetConfig()
     {
+    	if (currentDataSourceConfig == null)
+    	{
+    		return null;
+    	}
         return getCurrentDataSourceConfig().getResultSetConfig();
     }
     

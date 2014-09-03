@@ -103,7 +103,7 @@ public class SqlMapAutoCascadeQueryExecutor extends SqlMapExecutorAdapter
         }
         catch (Exception e)
         {
-            throw new SqlMapQueryException(e);
+            throw new SqlMapQueryException(e.getMessage(), e);
         }
         finally
         {

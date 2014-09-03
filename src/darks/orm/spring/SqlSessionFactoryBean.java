@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
+import darks.orm.core.config.SpringDataParamConfig;
 import darks.orm.core.factory.SqlSessionFactory;
 import darks.orm.datasource.factory.DataSourceFactory;
 import darks.orm.exceptions.ConfigException;
@@ -54,9 +55,12 @@ public class SqlSessionFactoryBean implements BeanDefinitionRegistryPostProcesso
 	private BeanNameGenerator nameGenerator;
 
 	private String beanName;
-
+	
+	private SpringDataParamConfig dataParamConfig = new SpringDataParamConfig();
+    
 	public SqlSessionFactoryBean()
 	{
+		
 	}
 
 	@Override
@@ -98,7 +102,7 @@ public class SqlSessionFactoryBean implements BeanDefinitionRegistryPostProcesso
 	
 	private void buildSqlSessionFactory() throws Exception
 	{
-		DataSourceFactory.getInstance().setDataSource(dataSource);
+		DataSourceFactory.getInstance().setDataSource(dataSource, dataParamConfig);
 		SqlSessionFactory.initialize(configLocation.getInputStream());
 	}
 
@@ -150,5 +154,16 @@ public class SqlSessionFactoryBean implements BeanDefinitionRegistryPostProcesso
 		this.configLocation = configLocation;
 	}
 
+	public SpringDataParamConfig getDataParamConfig()
+	{
+		return dataParamConfig;
+	}
+
+	public void setDataParamConfig(SpringDataParamConfig dataParamConfig)
+	{
+		this.dataParamConfig = dataParamConfig;
+	}
+
+	
 	
 }

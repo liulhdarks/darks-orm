@@ -73,14 +73,7 @@ public class ResultSetConfig
     
     public void setSensitive(String isSensitive)
     {
-        if ("true".equalsIgnoreCase(isSensitive))
-        {
-            sensitive = true;
-        }
-        else if ("false".equalsIgnoreCase(isSensitive))
-        {
-            sensitive = false;
-        }
+    	sensitive = Boolean.parseBoolean(isSensitive);
     }
     
     public void setConcurrency(String concurr)

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import darks.orm.core.config.sqlmap.SqlMapConfiguration;
+import darks.orm.datasource.factory.DataSourceFactory;
 import darks.orm.exceptions.ConfigException;
 
 public class Configuration
@@ -65,13 +66,24 @@ public class Configuration
     // 确定主数据源
     public void ensureMainDataSourceConfig()
     {
-        if (mainDsConfig == null && dsConfigs.size() > 0)
+        if (mainDsConfig == null && !dsConfigs.isEmpty())
         {
             for (DataSourceConfiguration ds : dsConfigs.values())
             {
                 mainDsConfig = ds;
                 break;
             }
+        }
+        
+        if (DataSourceFactory.getInstance().isVaild())
+        {
+        	DataSourceConfiguration ds = mainDsConfig;
+        	mainDsConfig = DataSourceFactory.getInstance().getDataSourceConfig();
+        	if (ds != null)
+        	{
+            	mainDsConfig.setNext(ds);
+            	mainDsConfig.setNextId(ds.getId());
+        	}
         }
         if (mainDsConfig == null)
         {
@@ -83,7 +95,7 @@ public class Configuration
     public void ensureDataSourceChain()
         throws ConfigException
     {
-        if (dsConfigs.size() > 0)
+        if (!dsConfigs.isEmpty())
         {
             for (DataSourceConfiguration dsc : dsConfigs.values())
             {

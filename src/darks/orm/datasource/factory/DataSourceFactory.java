@@ -21,12 +21,17 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
+import darks.orm.core.config.DataSourceConfiguration;
+import darks.orm.core.config.SpringDataParamConfig;
+import darks.orm.core.config.SpringDataSourceConfiguration;
 import darks.orm.datasource.ConnectionHandler;
 
 public class DataSourceFactory extends ConnectionHandler
 {
     
     private DataSource dataSource;
+    
+    private DataSourceConfiguration dataSourceConfig;
     
     private static DataSourceFactory instance = null;
     
@@ -40,7 +45,7 @@ public class DataSourceFactory extends ConnectionHandler
     
     public DataSourceFactory(DataSource dataSource)
     {
-        this.dataSource = dataSource;
+    	setDataSource(dataSource);
     }
     
     public static DataSourceFactory getInstance()
@@ -83,6 +88,27 @@ public class DataSourceFactory extends ConnectionHandler
     public void setDataSource(DataSource dataSource)
     {
         this.dataSource = dataSource;
+        dataSourceConfig = new SpringDataSourceConfiguration(dataSource);
     }
+    
+    public void setDataSource(DataSource dataSource, SpringDataParamConfig dataParamConfig)
+    {
+        this.dataSource = dataSource;
+        dataSourceConfig = new SpringDataSourceConfiguration(dataSource);
+        dataSourceConfig.getResultSetConfig().setConcurrency(dataParamConfig.getConcurrency());
+        dataSourceConfig.getResultSetConfig().setSensitive(dataParamConfig.getSensitive());
+        dataSourceConfig.getResultSetConfig().setType(dataParamConfig.getResultSetType());
+        dataSourceConfig.setAutoCommit(dataParamConfig.isAutoCommit());
+    }
+
+	public DataSourceConfiguration getDataSourceConfig()
+	{
+		return dataSourceConfig;
+	}
+
+	public void setDataSourceConfig(DataSourceConfiguration dataSourceConfig)
+	{
+		this.dataSourceConfig = dataSourceConfig;
+	}
     
 }

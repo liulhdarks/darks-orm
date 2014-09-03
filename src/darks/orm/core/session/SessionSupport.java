@@ -36,6 +36,7 @@ import darks.orm.annotation.Id.GenerateKeyType;
 import darks.orm.app.Page;
 import darks.orm.app.SqlSession;
 import darks.orm.core.cache.CacheContext;
+import darks.orm.core.config.ResultSetConfig;
 import darks.orm.core.data.FieldData;
 import darks.orm.core.data.PrimaryKeyData;
 import darks.orm.core.factory.ClassFactory;
@@ -94,7 +95,15 @@ public abstract class SessionSupport implements Serializable, SqlSession
         if (!inited || tx == null)
         {
             tx = TransactionFactory.getTransaction();
-            stmtType = ConnectionFactory.getInstance().getCurrentResultSetConfig().getStatementType();
+            ResultSetConfig cfg = ConnectionFactory.getInstance().getCurrentResultSetConfig();
+            if (cfg != null)
+            {
+                stmtType = cfg.getStatementType();
+            }
+            else
+            {
+            	stmtType = StatementType.Scorllable;
+            }
             inited = true;
         }
     }
