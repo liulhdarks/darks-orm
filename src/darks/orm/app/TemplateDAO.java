@@ -36,7 +36,7 @@ import darks.orm.core.session.SessionContext;
  * For example:
  * 
  * <pre>
- *      public class UserDAO extends BaseDAO {
+ *      public class UserDAO extends TemplateDAO {
  *           ...
  *      }
  * </pre>

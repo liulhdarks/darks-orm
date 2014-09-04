@@ -24,16 +24,19 @@ public class SimpleAspectWrapper
     
     protected Object[] params;
     
+    protected Object[] methodParams;
+    
     public SimpleAspectWrapper()
     {
         
     }
     
-    public SimpleAspectWrapper(String sql, Object[] params)
+    public SimpleAspectWrapper(String sql, Object[] params, Object[] methodParams)
     {
         super();
         this.sql = sql;
         this.params = params;
+        this.methodParams = methodParams;
     }
     
     public String getSql()
@@ -57,5 +60,15 @@ public class SimpleAspectWrapper
             params = new Object[0];
         this.params = params;
     }
+
+	public Object[] getMethodParams()
+	{
+		return methodParams;
+	}
+
+	public void setMethodParams(Object[] methodParams)
+	{
+		this.methodParams = methodParams;
+	}
     
 }

@@ -126,7 +126,7 @@ public class SqlMapSingletonFactory
         {
             throw new SqlMapUpdateException("Update updateData is null");
         }
-        
+        Object[] methodParams = params;
         InterfaceMethodData idata = ClassFactory.getInterfaceClass(id);
         StringBuilder sqlBuf = new StringBuilder();
         try
@@ -163,7 +163,7 @@ public class SqlMapSingletonFactory
             }
             else
             {
-                SimpleAspectWrapper sqlMapAspectData = new SimpleAspectWrapper(sql, params);
+                SimpleAspectWrapper sqlMapAspectData = new SimpleAspectWrapper(sql, params, methodParams);
                 SqlMapExecutor exec = ExecutorFactory.getSqlMapUpdateExecutor(session, updateData, sqlMapAspectData);
                 if (exec.initialize())
                 {
@@ -358,6 +358,7 @@ public class SqlMapSingletonFactory
         {
             throw new SqlMapQueryException("Query queryData is null");
         }
+        Object[] methodParams = params;
         InterfaceMethodData idata = ClassFactory.getInterfaceClass(id);
         StringBuilder sqlBuf = new StringBuilder();
         try
@@ -395,7 +396,7 @@ public class SqlMapSingletonFactory
             params = null;
         
         QueryAspectWrapper queryWrapper =
-            new QueryAspectWrapper(sql, params, values, page, pageSize, alias, attr, queryData.isAutoCascade());
+            new QueryAspectWrapper(sql, params, methodParams, values, page, pageSize, alias, attr, queryData.isAutoCascade());
         SqlMapExecutor exec =
             ExecutorFactory.getSqlMapQueryExecutor(session, dmlData, queryData, queryWrapper, queryEnumType);
         if (exec.initialize())

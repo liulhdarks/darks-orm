@@ -17,16 +17,23 @@
 
 package darks.orm.core.aspect.jython;
 
-import darks.orm.app.QueryEnumType;
-import darks.orm.core.data.xml.AspectData;
-import darks.orm.core.data.xml.SimpleAspectWrapper;
-import darks.orm.core.data.xml.QueryAspectWrapper;
-import darks.orm.core.data.xml.AspectData.AspectType;
-import darks.orm.core.factory.JythonFactory;
-import darks.orm.exceptions.JythonAspectException;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
+
+import darks.orm.app.QueryEnumType;
+import darks.orm.core.data.xml.AspectData;
+import darks.orm.core.data.xml.AspectData.AspectType;
+import darks.orm.core.data.xml.QueryAspectWrapper;
+import darks.orm.core.data.xml.SimpleAspectWrapper;
+import darks.orm.core.factory.JythonFactory;
+import darks.orm.exceptions.AspectException;
+import darks.orm.exceptions.JythonAspectException;
 
 public class PythonParser
 {
@@ -65,7 +72,7 @@ public class PythonParser
         else if (aspectData.getAspectType() == AspectType.PYFILE)
         {
             pyInter.exec(PythonBuilder.getPythonHeader().toString());
-            pyInter.execfile(aspectData.getContent());
+            pyInter.execfile(getFileInputStream(aspectData.getContent()));
             pyInter.exec(PythonBuilder.buildJythonTail(aspectData.getClassName()));
         }
         else
@@ -115,4 +122,31 @@ public class PythonParser
         return pyInter;
     }
     
+
+    
+    private InputStream getFileInputStream(String fileName)
+    {
+    	if (fileName == null || "".equals(fileName.trim()))
+    	{
+    		throw new AspectException("Invalid jython file name " + fileName);
+    	}
+    	InputStream result = null;
+    	InputStream ins = this.getClass().getResourceAsStream(fileName);
+    	if (ins != null)
+    	{
+    		result = new BufferedInputStream(ins);
+    	}
+    	else
+    	{
+    		try
+			{
+    			result = new BufferedInputStream(new FileInputStream(fileName));
+			}
+			catch (FileNotFoundException e)
+			{
+				throw new AspectException("Cannot find jython file " + fileName);
+			}
+    	}
+    	return result;
+    }
 }

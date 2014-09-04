@@ -39,17 +39,15 @@ public class QueryAspectWrapper extends SimpleAspectWrapper
         
     }
     
-    public QueryAspectWrapper(String sql, Object[] params)
+    public QueryAspectWrapper(String sql, Object[] params, Object[] methodParams)
     {
-        super(sql, params);
+    	super(sql, params, methodParams);
     }
     
-    public QueryAspectWrapper(String sql, Object[] params, Object[] values, int page, int pageSize, String alias,
-        String attribute, boolean autoCascade)
+    public QueryAspectWrapper(String sql, Object[] params, Object[] methodParams, Object[] values, 
+    		int page, int pageSize, String alias, String attribute, boolean autoCascade)
     {
-        super();
-        this.sql = sql;
-        this.params = params;
+    	super(sql, params, methodParams);
         this.values = values;
         this.page = page;
         this.pageSize = pageSize;

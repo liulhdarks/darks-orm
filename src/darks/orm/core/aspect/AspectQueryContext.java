@@ -17,13 +17,14 @@
 
 package darks.orm.core.aspect;
 
-import darks.orm.app.SqlSession;
 import darks.orm.app.QueryEnumType;
+import darks.orm.app.SqlSession;
 import darks.orm.core.aspect.jclass.JavaClassQueryAspect;
+import darks.orm.core.aspect.js.JsQueryAspect;
 import darks.orm.core.aspect.jython.PythonQueryAspect;
 import darks.orm.core.data.xml.AspectData;
-import darks.orm.core.data.xml.QueryAspectWrapper;
 import darks.orm.core.data.xml.AspectData.AspectType;
+import darks.orm.core.data.xml.QueryAspectWrapper;
 import darks.orm.exceptions.AspectException;
 
 public class AspectQueryContext implements QueryAspect
@@ -57,6 +58,10 @@ public class AspectQueryContext implements QueryAspect
         else if (aspectType == AspectType.JAVACLASS)
         {
             return new JavaClassQueryAspect();
+        }
+        else if (aspectType == AspectType.JAVASCRIPT || aspectType == AspectType.JSFILE)
+        {
+            return new JsQueryAspect();
         }
         else
         {

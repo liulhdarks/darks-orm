@@ -20,6 +20,7 @@ package darks.orm.core.aspect;
 import darks.orm.app.SqlSession;
 import darks.orm.app.QueryEnumType;
 import darks.orm.core.aspect.jclass.JavaClassUpdateAspect;
+import darks.orm.core.aspect.js.JsUpdateAspect;
 import darks.orm.core.aspect.jython.PythonUpdateAspect;
 import darks.orm.core.data.xml.AspectData;
 import darks.orm.core.data.xml.SimpleAspectWrapper;
@@ -57,6 +58,10 @@ public class AspectUpdateContext implements SimpleAspect
         else if (aspectType == AspectType.JAVACLASS)
         {
             return new JavaClassUpdateAspect();
+        }
+        else if (aspectType == AspectType.JSFILE || aspectType == AspectType.JAVASCRIPT)
+        {
+            return new JsUpdateAspect();
         }
         else
         {

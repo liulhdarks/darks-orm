@@ -17,15 +17,26 @@
 
 package darks.orm.core.aspect.js;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+
 import darks.orm.app.QueryEnumType;
 import darks.orm.core.data.xml.AspectData;
+import darks.orm.core.data.xml.AspectData.AspectType;
 import darks.orm.core.data.xml.QueryAspectWrapper;
 import darks.orm.core.data.xml.SimpleAspectWrapper;
-import darks.orm.core.data.xml.AspectData.AspectType;
+import darks.orm.exceptions.AspectException;
 import darks.orm.exceptions.JsAspectException;
+import darks.orm.log.Logger;
+import darks.orm.log.LoggerFactory;
 
 /**
  * It is used to parse javascript in sqlmap.
@@ -41,6 +52,8 @@ import darks.orm.exceptions.JsAspectException;
 public class JsParser
 {
     private static ScriptEngineManager manager;
+    
+    private static Logger log = LoggerFactory.getLogger(JsParser.class);
     
     static
     {
@@ -64,7 +77,7 @@ public class JsParser
             }
             else if (aspectData.getAspectType() == AspectType.JSFILE)
             {
-                engine.eval(new java.io.FileReader(aspectData.getContent()));
+                engine.eval(getJsFileReader(aspectData.getContent()));
             }
             else
             {
@@ -81,6 +94,11 @@ public class JsParser
             }
             
         }
+        catch (NoSuchMethodException e)
+        {
+        	log.warn("Fail to execute JS method " + methodType + "." + e.getMessage());
+            return true;
+        }
         catch (Exception e)
         {
             throw new JsAspectException("JsParser parse error." + e.toString(), e);
@@ -94,5 +112,31 @@ public class JsParser
         {
             return (Boolean)retObj;
         }
+    }
+    
+    private Reader getJsFileReader(String fileName)
+    {
+    	if (fileName == null || "".equals(fileName.trim()))
+    	{
+    		throw new AspectException("Invalid javascript file name " + fileName);
+    	}
+    	Reader reader = null;
+    	InputStream ins = this.getClass().getResourceAsStream(fileName);
+    	if (ins != null)
+    	{
+    		reader = new BufferedReader(new InputStreamReader(ins));
+    	}
+    	else
+    	{
+    		try
+			{
+				reader = new BufferedReader(new FileReader(fileName));
+			}
+			catch (FileNotFoundException e)
+			{
+				throw new AspectException("Cannot find javascript file " + fileName);
+			}
+    	}
+    	return reader;
     }
 }
