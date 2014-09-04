@@ -35,31 +35,31 @@ dataSource tag is used to configure database source information. It also can be 
 which can use next dataSource node when current node's connection is invalid or occur error.<br/>
 Examples:
 <pre>
-\<dataSource type="jdbc" id="jdbc" main="true"\>
-	\<property name="driver" value="com.mysql.jdbc.Driver"\>\</property\>
-	\<property name="url" value="xxxxxx"/\>
-	\<property name="username" value="xxxxxx"/\>
-	\<property name="password" value="xxxxxx"/\>
-	\<property name="fetchSize" value="0"\>\</property\>
-	\<property name="autoCommit" value="true"\>\</property\>
-	\<resultSet type="scroll" sensitive="false" concurrency="read"\>\</resultSet\>
-\</dataSource>
+&lt;dataSource type="jdbc" id="jdbc" main="true"&gt;
+	&lt;property name="driver" value="com.mysql.jdbc.Driver"&gt;&lt;/property&gt;
+	&lt;property name="url" value="xxxxxx"/&gt;
+	&lt;property name="username" value="xxxxxx"/&gt;
+	&lt;property name="password" value="xxxxxx"/&gt;
+	&lt;property name="fetchSize" value="0"&gt;&lt;/property&gt;
+	&lt;property name="autoCommit" value="true"&gt;&lt;/property&gt;
+	&lt;resultSet type="scroll" sensitive="false" concurrency="read"&gt;&lt;/resultSet&gt;
+&lt;/dataSource&gt;
 
-\<dataSource type="bonecp" id="bonecp" chainref="jdbc"\>
-	\<property name="driver" value="com.mysql.jdbc.Driver"\>\</property\>
-	\<property name="url" value="xxxxxx"\>\</property\>
-	\<property name="username" value="xxxxxx"\>\</property\>
-	\<property name="password" value="xxxxxx"\>\</property\>
+&lt;dataSource type="bonecp" id="bonecp" chainref="jdbc"&gt;
+	&lt;property name="driver" value="com.mysql.jdbc.Driver"&gt;&lt;/property&gt;
+	&lt;property name="url" value="xxxxxx"&gt;&lt;/property&gt;
+	&lt;property name="username" value="xxxxxx"&gt;&lt;/property&gt;
+	&lt;property name="password" value="xxxxxx"&gt;&lt;/property&gt;
 	......
-	\<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
-\</dataSource>
+	&lt;resultSet type="scroll" sensitive="false" concurrency="read"&gt;&lt;/resultSet&gt;
+&lt;/dataSource&gt;
 
-\<dataSource type="jndi" id="jndi" chainref="bonecp"\>
-	\<property name="fetchSize" value="0"\>\</property\>
-	\<property name="autoCommit" value="true"\>\</property\>
-	\<property name="jndiPoolName" value="java:comp/env/jdbc/xxxxxx"\>\</property\>
-	\<resultSet type="scroll" sensitive="false" concurrency="read"\>\</resultSet\>
-\</dataSource\>
+&lt;dataSource type="jndi" id="jndi" chainref="bonecp"&gt;
+	&lt;property name="fetchSize" value="0"&gt;&lt;/property&gt;
+	&lt;property name="autoCommit" value="true"&gt;&lt;/property&gt;
+	&lt;property name="jndiPoolName" value="java:comp/env/jdbc/xxxxxx"&gt;&lt;/property&gt;
+	&lt;resultSet type="scroll" sensitive="false" concurrency="read"&gt;&lt;/resultSet&gt;
+&lt;/dataSource&gt;
 </pre>
 
 The above example indicate that if JDBC fail to get connection, bonecp connection will try again. 
@@ -72,12 +72,12 @@ which class will be loaded when startup. You even can use <package> child tag to
 Examples:
 
 <pre>
-\<entities\>
-	<entity alias="User" class="darks.orm.test.model.User"/\>
-	<entity alias="Depart" class="darks.orm.test.model.Depart"/\>
+&lt;entities&gt;
+	&lt;entity alias="User" class="darks.orm.test.model.User"/&gt;
+	&lt;entity alias="Depart" class="darks.orm.test.model.Depart"/&gt;
 	....
-	<package name="darks.orm.test.model"/\>
-\</entities\>
+	&lt;package name="darks.orm.test.model"/&gt;
+&lt;/entities&gt;
 </pre>
 
 ### <cacheGroup> Tag
@@ -89,20 +89,20 @@ scope, <ehCache> will call EhCache to manage cache objects.<br/>
 Examples:
 
 <pre>
-\<cacheGroup use="true" type="auto" cacheId="application" synchronous="true"\>
-	\<appCache strategy="Lru" 
+&lt;cacheGroup use="true" type="auto" cacheId="application" synchronous="true"&gt;
+	&lt;appCache strategy="Lru" 
 			  ....
-			  copyStrategy="serial"/\>
-	\<threadCache  strategy="Lru" 
+			  copyStrategy="serial"/&gt;
+	&lt;threadCache  strategy="Lru" 
 				  ....
 				  entirety="true"
-				  copyStrategy="serial"/\>
-	\<ehCache id="ehcache1"
+				  copyStrategy="serial"/&gt;
+	&lt;ehCache id="ehcache1"
 			 maxElementsInMemory="10000"
 			 eternal="false"
 			 ....
-             memoryStoreEvictionPolicy="LRU"/\>
-\</cacheGroup\>
+             memoryStoreEvictionPolicy="LRU"/&gt;
+&lt;/cacheGroup&gt;
 </pre>
 
 ### <sqlMapGroup> Tag
@@ -111,9 +111,9 @@ sqlMapGroup tag is used to configure sqlmap configuration files paths. <br/>
 Examples:
 
 <pre>
-\<sqlMapGroup\>
-	\<sqlMap\>/sqlmap-*.xml\</sqlMap\>
-\</sqlMapGroup\>
+&lt;sqlMapGroup&gt;
+	&lt;sqlMap&gt;/sqlmap-*.xml&lt;/sqlMap&gt;
+&lt;/sqlMapGroup&gt;
 </pre>
 
 ### Spring Configuration
@@ -123,22 +123,22 @@ datasource, and other datasource configured in darks.xml will be its child node.
 Examples:
 
 <pre>
-\<bean id="testDataSource" class="org.apache.commons.dbcp.BasicDataSource"\>
-	\<property name="driverClassName" value="com.mysql.jdbc.Driver" /\>
-	\<property name="url" value="xxxxxx" /\>
-	\<property name="username" value="xxxxx" /\>
-	\<property name="password" value="xxxxx" /\>
-\</bean\>
+&lt;bean id="testDataSource" class="org.apache.commons.dbcp.BasicDataSource"&gt;
+	&lt;property name="driverClassName" value="com.mysql.jdbc.Driver" /&gt;
+	&lt;property name="url" value="xxxxxx" /&gt;
+	&lt;property name="username" value="xxxxx" /&gt;
+	&lt;property name="password" value="xxxxx" /&gt;
+&lt;/bean&gt;
 
-\<bean class="darks.orm.spring.SqlSessionFactoryBean"\>
-	\<property name="dataSource" ref="testDataSource" /\>
-	\<property name="scanPackages" value="darks.orm.test.mapper,darks.orm.examples.mapper" /\>
-	\<property name="configLocation" value="classpath:darks.xml" /\>
-	\<property name="dataParamConfig.autoCommit" value="true" /\>
-	\<property name="dataParamConfig.resultSetType" value="scroll" /\>
-	\<property name="dataParamConfig.sensitive" value="false" /\>
-	\<property name="dataParamConfig.concurrency" value="read" /\>
-\</bean>
+&lt;bean class="darks.orm.spring.SqlSessionFactoryBean"&gt;
+	&lt;property name="dataSource" ref="testDataSource" /&gt;
+	&lt;property name="scanPackages" value="darks.orm.test.mapper,darks.orm.examples.mapper" /&gt;
+	&lt;property name="configLocation" value="classpath:darks.xml" /&gt;
+	&lt;property name="dataParamConfig.autoCommit" value="true" /&gt;
+	&lt;property name="dataParamConfig.resultSetType" value="scroll" /&gt;
+	&lt;property name="dataParamConfig.sensitive" value="false" /&gt;
+	&lt;property name="dataParamConfig.concurrency" value="read" /&gt;
+&lt;/bean&gt;
 </pre>
 
 Define Entity
