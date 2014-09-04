@@ -29,7 +29,7 @@ Configuration
 ---------------------
 You should create configuration file "darks.xml" under root source directory.
 
-### <dataSource> Tag
+### \<dataSource\> Tag
 
 dataSource tag is used to configure database source information. It also can be built chain structure, 
 which can use next dataSource node when current node's connection is invalid or occur error.<br/>
@@ -65,7 +65,7 @@ Examples:
 The above example indicate that if JDBC fail to get connection, bonecp connection will try again. 
 And if bonecp failed, jndi will try again.
 
-### <entities> Tag
+### \<entities\> Tag
 
 If you want to load entities when startup or use entity's alias for sqlmap, you should use entities to define 
 which class will be loaded when startup. You even can use <package> child tag to define all classes under target package.<br/>
@@ -80,7 +80,7 @@ Examples:
 &lt;/entities&gt;
 </pre>
 
-### <cacheGroup> Tag
+### \<cacheGroup\> Tag
 
 cacheGroup tag is used to configure global or local cache configuration. Cache can act on all executing method as global cache, 
 it also can act on specify method as local cache. <br/>
@@ -105,7 +105,7 @@ Examples:
 &lt;/cacheGroup&gt;
 </pre>
 
-### <sqlMapGroup> Tag
+### \<sqlMapGroup\> Tag
 
 sqlMapGroup tag is used to configure sqlmap configuration files paths. <br/>
 Examples:
@@ -390,3 +390,5 @@ You can use python, javascript, java as the aspect script to do something before
 	&lt;/aspect&gt;
 &lt;/Query&gt;
 </pre>
+
+I wish you a pleasant to use darks-orm. If you have some good advice or bug report, please share with us. Thank you!
