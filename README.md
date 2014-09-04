@@ -3,7 +3,7 @@ Darks ORM
 
 Darks is a comprehensive type of lightweight ORM data persistence layer framework, integrated Hibernate "automation" ORM framework for the convenience, stability, as well as the Mybatis ORM framework "semi-automatic" efficient, high concurrency, set two ORM patterns as a whole.The framework to simplify the cumbersome configuration process, using Jython script language extensions, as a dynamic SQL language realization scheme.Construction of a highly efficient multi function domain data cache, and integrated EhCache third party data cache.
 
-Feature
+Feature 1.0.0
 ----------------
 
 * Support SQL language query, the result set for the JAVA object automatic mapping.
@@ -20,3 +20,185 @@ Feature
 * SqlMap dynamic SQL query support Jython script (Python JAVA), Javascript, JavaBean, custom and other scripting language of the dynamic blocking modification.
 * Support SqlMap with JAVA interface and the JAVA abstract class mapping.The JAVA abstract class mapping in SqlMap mapping, join BaseDAO encapsulation method for calling.
 * Support the integration of EhCache data cache, data cache framework.Can choose to use the framework itself cache mechanism or the third cache mechanism.The caching mechanism includes application level cache, thread cache level as well as the session level cache (WEB application support).
+
+Get Package
+-----------------
+You can get latest jar package from [darks-orm/release](https://github.com/liulhdarks/darks-orm/releases).
+
+Configuration
+---------------------
+You should create configuration file "darks.xml" under root source directory.
+
+### <dataSource> Tag
+
+dataSource tag is used to configure database source information. It also can be built chain structure, 
+which can use next dataSource node when current node's connection is invalid or occur error.<br/>
+Examples:
+<pre>
+<dataSource type="jdbc" id="jdbc" main="true">
+	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+	<property name="url" value="xxxxxx"/>
+	<property name="username" value="xxxxxx"/>
+	<property name="password" value="xxxxxx"/>
+	<property name="fetchSize" value="0"></property>
+	<property name="autoCommit" value="true"></property>
+	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+</dataSource>
+
+<dataSource type="bonecp" id="bonecp" chainref="jdbc">
+	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+	<property name="url" value="xxxxxx"></property>
+	<property name="username" value="xxxxxx"></property>
+	<property name="password" value="xxxxxx"></property>
+	......
+	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+</dataSource>
+
+<dataSource type="jndi" id="jndi" chainref="bonecp">
+	<property name="fetchSize" value="0"></property>
+	<property name="autoCommit" value="true"></property>
+	<property name="jndiPoolName" value="java:comp/env/jdbc/xxxxxx"></property>
+	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+</dataSource>
+</pre>
+
+The above example indicate that if JDBC fail to get connection, bonecp connection will try again. 
+And if bonecp failed, jndi will try again.
+
+### <entities> Tag
+
+If you want to load entities when startup or use entity's alias for sqlmap, you should use entities to define 
+which class will be loaded when startup. You even can use <package> child tag to define all classes under target package.<br/>
+Examples:
+
+<pre>
+<entities>
+	<entity alias="User" class="darks.orm.test.model.User"/>
+	<entity alias="Depart" class="darks.orm.test.model.Depart"/>
+	....
+	<package name="darks.orm.test.model"/>
+</entities>
+</pre>
+
+### <cacheGroup> Tag
+
+cacheGroup tag is used to configure global or local cache configuration. Cache can act on all executing method as global cache, 
+it also can act on specify method as local cache. <br/>
+Cache has some action scope. <appCache> will live on the application scope, <threadCache> will just live on the current thread 
+scope, <ehCache> will call EhCache to manage cache objects.<br/>
+Examples:
+
+<pre>
+<cacheGroup use="true" type="auto" cacheId="application" synchronous="true">
+	<appCache strategy="Lru" 
+			  ....
+			  copyStrategy="serial"/>
+	<threadCache  strategy="Lru" 
+				  ....
+				  entirety="true"
+				  copyStrategy="serial"/>
+	<ehCache id="ehcache1"
+			 maxElementsInMemory="10000"
+			 eternal="false"
+			 ....
+             memoryStoreEvictionPolicy="LRU"/>
+</cacheGroup>
+</pre>
+
+### <sqlMapGroup> Tag
+
+sqlMapGroup tag is used to configure sqlmap configuration files paths. <br/>
+Examples:
+
+<pre>
+<sqlMapGroup>
+	<sqlMap>/sqlmap-*.xml</sqlMap>
+</sqlMapGroup>
+</pre>
+
+### Spring Configuration
+
+If you have configured datasource both darks.xml and springContext.xml, the spring's datasource will be the main
+datasource, and other datasource configured in darks.xml will be its child node.<br/>
+Examples:
+
+<pre>
+<bean id="testDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+	<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	<property name="url" value="xxxxxx" />
+	<property name="username" value="xxxxx" />
+	<property name="password" value="xxxxx" />
+</bean>
+
+<bean class="darks.orm.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="testDataSource" />
+	<property name="scanPackages" value="darks.orm.test.mapper,darks.orm.examples.mapper" />
+	<property name="configLocation" value="classpath:darks.xml" />
+	<property name="dataParamConfig.autoCommit" value="true" />
+	<property name="dataParamConfig.resultSetType" value="scroll" />
+	<property name="dataParamConfig.sensitive" value="false" />
+	<property name="dataParamConfig.concurrency" value="read" />
+</bean>
+</pre>
+
+Define Entity
+------------------------
+
+<pre>
+@Entity("users")
+public class User
+{
+	//@Id(feedBackKey = FeedBackKeyType.SELECT, select = "SELECT LAST_INSERT_ID()")
+    //@Id(type = GenerateKeyType.SELECT, select = "SELECT LAST_INSERT_ID()")
+    @Id
+    @Column("id")
+    private int userId;
+    
+    @Column("name")
+    private String userName;
+    
+    @Column(value="pwd", nullable=false)
+    private String userPwd;
+    
+    @Column("depart_id")
+    private Depart depart;
+    ....
+    
+    //@OneToOne(resultType = Depart.class, SQL = "select * from t_depart where depart_id = ?")
+    @OneToOne(resultType = Depart.class, mappedBy = "departId", mappedType = MappedType.EntityType)
+    public Depart getDepart()
+    {
+        return depart;
+    }
+    
+    //@ManyToOne(classType=Depart.class, SQL="select * from t_depart where depart_id = ?")
+    //@ManyToOne(resultType = Depart.class, mappedBy = "departId", mappedType = MappedType.EntityType)
+    
+    @OneToMany(resultType = User.class, mappedBy = "depart", mappedType = MappedType.EntityType)
+    public List<User> getUsers(){...}
+    ....
+    
+    @Query(SQL="select * from users where parent_id = ?", 
+			resultType=User.class, queryType=QueryType.SingleType, paramType={"id"})
+	public List<User> getUsers()
+	{
+		return null;
+	}
+}
+</pre>
+
+Basic Call
+----------------------
+You can call executeQuery or executeUpdate to execute original JDBC method directly. And you can call queryList, 
+queryById, queryPageList etc to execute ORM method. queryCascadeXXX can query entities object by cascade way.<br/>
+Examples:
+
+<pre>
+List<User> users = session.queryList(User.class, "select * from users where name = ?", "darks");
+Page<User> page = session.queryPageList(User.class, "select * from users", page, pageSize);
+session.save(new User(....));
+session.update(user);
+session.delete(User.class, userId);
+session.delete(user);
+</pre>
+

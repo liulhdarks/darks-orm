@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!ELEMENT darks (dataSource*,useThreadLocal?,entitys?,cacheGroup?,sqlMapGroup?)>
+<!ELEMENT darks (dataSource*,useThreadLocal?,entities?,cacheGroup?,sqlMapGroup?)>
 
 <!ELEMENT dataSource (property+,resultSet?)>
 <!ATTLIST dataSource type CDATA #REQUIRED>
@@ -17,7 +17,7 @@
 <!ATTLIST resultSet sensitive (true|false) #IMPLIED>
 <!ATTLIST resultSet concurrency (read|updatable) #IMPLIED>
 
-<!ELEMENT entitys (entity|package)*>
+<!ELEMENT entities (entity|package)*>
 
 <!ELEMENT entity EMPTY>
 <!ATTLIST entity class CDATA #REQUIRED>

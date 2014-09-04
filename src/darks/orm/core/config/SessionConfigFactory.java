@@ -239,7 +239,7 @@ public final class SessionConfigFactory
         throws ConfigException
     {
         EntityConfiguration entityConfig = cfg.getEntityConfig();
-        String xpath = "/darks/entitys";
+        String xpath = "/darks/entities";
         Element node = (Element)doc.selectSingleNode(xpath);
         if (node == null)
             return;
