@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE darks PUBLIC "-//darks//DTD darks 3.0//EN" "darks.dtd">
+<darks>
+
+    <dataSource type="jdbc" id="jdbc" main="true">
+    	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+    	<property name="url" value="jdbc:mysql://localhost:3306/products"></property>
+    	<property name="username" value="root"></property>
+    	<property name="password" value="1234"></property>
+    	<property name="fetchSize" value="0"></property>
+    	<property name="autoCommit" value="true"></property>
+    	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+    </dataSource>
+
+    <dataSource type="bonecp" id="bonecp" chainref="jdbc">
+    	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+    	<property name="url" value="jdbc:mysql://localhost:3306/products"></property>
+    	<property name="username" value="root"></property>
+    	<property name="password" value="1234"></property>
+    	<property name="fetchSize" value="0"></property>
+    	<property name="autoCommit" value="true"></property>
+    	<property name="idleConnectionTestPeriod" value="60"></property>
+    	<property name="idleMaxAge" value="240"></property>
+    	<property name="partitionCount" value="3"></property>
+    	<property name="maxConnectionsPerPartition" value="20"></property>
+    	<property name="minConnectionsPerPartition" value="5"></property>
+    	<property name="acquireIncrement" value="5"></property>
+    	<property name="releaseHelperThreads" value="3"></property>
+    	<property name="statementsCacheSize" value="20"></property>
+    	<property name="statementReleaseHelperThreads" value="3"></property>
+    	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
+    </dataSource>
+    
+    <useThreadLocal use="true"></useThreadLocal>
+    
+    <!-- 实体类配置 -->
+    <entities>
+		<package name="darks.orm.examples.model"/>
+	</entities>
+	
+	<!-- 缓存配置  -->
+	<cacheGroup use="false" type="auto" cacheId="application" synchronous="true">
+		<appCache strategy="Lru" 
+				  maxObject="50"
+				  eternal="true"
+				  idleTime="500"
+				  liveTime="500"
+				  entirety="true"
+				  copyStrategy="serial"/>
+		<threadCache  strategy="Lru" 
+					  maxObject="50"
+					  entirety="true"
+					  copyStrategy="serial"/>
+		<ehCache id="ehcache1"
+				 maxElementsInMemory="10000"
+				 eternal="false"
+				 timeToIdleSeconds="0"
+				 timeToLiveSeconds="0"
+				 overflowToDisk="false"
+				 maxElementsOnDisk="10000000"
+	             diskPersistent="false"
+	             diskExpiryThreadIntervalSeconds="120"
+	             memoryStoreEvictionPolicy="LRU"/>
+		
+	</cacheGroup>
+	
+	<sqlMapGroup>
+		<sqlMap>/sqlmap-*.xml</sqlMap>
+	</sqlMapGroup>
+	
+	
+</darks>

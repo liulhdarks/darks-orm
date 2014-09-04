@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE SqlMap PUBLIC "-//darks//DTD sqlmap 3.0//EN" "sqlmap.dtd">
+<SqlMap>
+
+	<DDL>
+		<create tableName="depart">
+			<![CDATA[
+				create table depart(
+					id int auto_increment primary key,
+					name varchar(25) not null,
+					type int default 0
+				);
+			]]>
+		</create>
+		<create tableName="products">
+			<![CDATA[
+				create table products(
+					id int auto_increment primary key,
+					name varchar(25) not null,
+					type int default 1,
+					depart_id int,
+					width int,
+					height int,
+					weight float
+				);
+			]]>
+		</create>
+	</DDL>
+
+</SqlMap>
