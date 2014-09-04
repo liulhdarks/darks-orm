@@ -18,7 +18,7 @@ Feature 1.0.0
 * Support the SQL and source code separation to XML mapping configuration, i.e. using SqlMap mode of mapping the query update.
 * SqlMap support normal query, cascade query, select query, combination query, dynamic SQL query and other enquiries.
 * SqlMap dynamic SQL query support Jython script (Python JAVA), Javascript, JavaBean, custom and other scripting language of the dynamic blocking modification.
-* Support SqlMap with JAVA interface and the JAVA abstract class mapping.The JAVA abstract class mapping in SqlMap mapping, join BaseDAO encapsulation method for calling.
+* Support SqlMap with JAVA interface and the JAVA abstract class mapping.The JAVA abstract class mapping in SqlMap mapping, join TemplateDAO encapsulation method for calling.
 * Support the integration of EhCache data cache, data cache framework.Can choose to use the framework itself cache mechanism or the third cache mechanism.The caching mechanism includes application level cache, thread cache level as well as the session level cache (WEB application support).
 
 Get Package
@@ -162,6 +162,9 @@ public class User
     
     @Column("depart_id")
     private Depart depart;
+    
+    @Column("type")
+    private Integer type;
     ....
     
     //@OneToOne(resultType = Depart.class, SQL = "select * from t_depart where depart_id = ?")
@@ -200,5 +203,190 @@ session.save(new User(....));
 session.update(user);
 session.delete(User.class, userId);
 session.delete(user);
+session.executeQuery(....);
 </pre>
 
+SqlMap Call
+----------------------------
+
+### Build Mapper
+
+<pre>
+public interface UserMapper
+{
+
+	public List<User> queryUsers(@Param("type")int type);
+
+	public List<User> queryUsersByIds(@Param("ids")List<Integer> ids);
+	
+	public Page<User> queryUsersPage(@Param("cur")int page, int pageSize);
+	
+	public void updateUser(@Param("id") Integer id, @Param("name")String name);
+	
+	public void updateUserEntity(@Param("user")User user);
+
+	public List<User> queryUsersComplex(@Param("user")User user);
+
+	public List<User> queryUsersAspect(@Param("user")User user);
+	
+}
+</pre>
+
+You can also use abstract class. And if you extends class 'TemplateDAO', 
+the class can both calling basic methods and mapper methods.
+
+<pre>
+public abstract class UserMapper extends TemplateDAO
+{
+
+	public abstract List<User> queryUsers(@Param("type")int type);
+	...
+	public abstract List<User> queryUsersAspect(@Param("user")User user);
+	...
+}
+</pre>
+
+
+### Sqlmap File
+
+#### DML/DDL
+
+You can use DML tag to configure method mapping or use DDL tag to create,alter tables etc.
+The methods configured in DDL tag will be called when application startup.
+<pre>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE SqlMap PUBLIC "-//darks//DTD sqlmap 3.0//EN" "sqlmap.dtd">  
+
+<SqlMap>
+
+	&lt;DML namespace="darks.orm.test.mapper.UserMapper"&gt;
+		....
+	&lt;/DML&gt;
+	&lt;DDL&gt;
+		....
+	&lt;/DDL&gt;
+</SqlMap>
+</pre>
+
+#### Sqlmap Tags
+
+You can use tag \<where\>, \<trim\>, \<foreach\>, \<if\>, \<set\> etc to modify your SQL dynamically.
+
+<pre>
+
+&lt;tag id="fieldsUser"&gt;
+id,name,pwd,depart_id
+&lt;/tag&gt;
+
+&lt;Query id="queryUsersComplex" queryType="list" resultType="monitor"&gt;
+	select 
+	&lt;include refid="fieldsUser"/&gt;
+	from users 
+	&lt;where&gt;
+		&lt;if test ="user.type != null"&gt;
+			&lt;if test="user.type == 1"&gt;
+				type=#user.type
+			&lt;/if&gt;
+			&lt;elseif test="user.type == 2"&gt;
+				type=#user.type
+			&lt;/elseif&gt;
+			&lt;else&gt;
+				type=#user.type
+			&lt;/else&gt;
+		&lt;/if&gt;
+	&lt;/where&gt;
+	limit 10
+&lt;/Query&gt;
+
+&lt;Update id="updateUserEntity"&gt;
+	update users 
+	&lt;set&gt;
+		&lt;if test="user.name != null"&gt;
+			name = #user.name,
+		&lt;/if&gt;
+		&lt;if test="user.pwd != null"&gt;
+			pwd = #user.pwd,
+		&lt;/if&gt;
+		&lt;if test="#1.type &gt; 0"&gt;
+			type = #user.type,
+		&lt;/if&gt;
+	&lt;/set&gt;
+	where id=#user.id
+&lt;/Update&gt;
+</pre>
+
+Sqlmap Aspect
+------------------
+You can use python, javascript, java as the aspect script to do something before SQL executed and after SQL executed.
+
+### Python/Jython
+
+<pre>
+&lt;Query id="queryUsersComplex" queryType="list" resultType="monitor"&gt;
+	select 
+	&lt;include refid="fieldsUser"/&gt;
+	from users 
+	&lt;where&gt;
+		&lt;if test ="user.type != null"&gt;
+			&lt;if test="user.type == 1"&gt;
+				type=#user.type
+			&lt;/if&gt;
+			&lt;elseif test="user.type == 2"&gt;
+				type=#user.type
+			&lt;/elseif&gt;
+			&lt;else&gt;
+				type=#user.type
+			&lt;/else&gt;
+		&lt;/if&gt;
+	&lt;/where&gt;
+	limit 10
+	&lt;aspect&gt;
+		&lt;jython className="TestAspect"&gt;
+			class TestAspect(IAspect):
+				def before(self):
+					print __DATA.sql
+					for _user in __DATA.methodParams:
+						print _user
+					__DATA.sql = "select * from users limit 5"
+					return 1
+		&lt;/jython&gt;
+	&lt;/aspect&gt;
+&lt;/Query&gt;
+</pre>
+
+### Javascript
+
+<pre>
+&lt;Query id="queryUsersComplex" queryType="list" resultType="monitor"&gt;
+	select 
+	&lt;include refid="fieldsUser"/&gt;
+	from users 
+	&lt;where&gt;
+		&lt;if test ="user.type != null"&gt;
+			&lt;if test="user.type == 1"&gt;
+				type=#user.type
+			&lt;/if&gt;
+			&lt;elseif test="user.type == 2"&gt;
+				type=#user.type
+			&lt;/elseif&gt;
+			&lt;else&gt;
+				type=#user.type
+			&lt;/else&gt;
+		&lt;/if&gt;
+	&lt;/where&gt;
+	limit 10
+	&lt;aspect&gt;
+		&lt;javascript&gt;
+			function before(wrapper)
+			{
+				var user = wrapper.methodParams[0];
+				if (user.type == 2)
+				{
+					wrapper.sql = "select * from users limit 5";
+				}
+				return true;
+			}
+		&lt;/javascript&gt;
+	&lt;/aspect&gt;
+&lt;/Query&gt;
+</pre>
