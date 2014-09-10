@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>darks.orm</groupId>
   <artifactId>darks-orm</artifactId>
-  <version>1.0.0b</version>
+  <version>1.0.3b</version>
   <name>Darks ORM</name>
   <description>Darks ORM framework</description>
   

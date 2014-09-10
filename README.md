@@ -3,7 +3,16 @@ Darks ORM
 
 Darks is a comprehensive type of lightweight ORM data persistence layer framework, integrated Hibernate "automation" ORM framework for the convenience, stability, as well as the Mybatis ORM framework "semi-automatic" efficient, high concurrency, set two ORM patterns as a whole.The framework to simplify the cumbersome configuration process, using Jython script language extensions, as a dynamic SQL language realization scheme.Construction of a highly efficient multi function domain data cache, and integrated EhCache third party data cache.
 
-Feature 1.0.0
+Feature 1.0.3
+* Support Javascript sqlmap aspect script.
+* Support if,elseif,else,where,set,trim,foreach nested tags for sqlmap DML.
+* Support logic expression for condition tags.
+* Remove custom logger.
+* Support ORM spring configuration scanner.
+* Change XSD to DTD validate.
+* Fixed some query method bugs.
+
+Feature 1.0.1
 ----------------
 
 * Support SQL language query, the result set for the JAVA object automatic mapping.
@@ -17,7 +26,7 @@ Feature 1.0.0
 * Support general (non object relational mapping) JDBC query and update method.
 * Support the SQL and source code separation to XML mapping configuration, i.e. using SqlMap mode of mapping the query update.
 * SqlMap support normal query, cascade query, select query, combination query, dynamic SQL query and other enquiries.
-* SqlMap dynamic SQL query support Jython script (Python JAVA), Javascript, JavaBean, custom and other scripting language of the dynamic blocking modification.
+* SqlMap dynamic SQL query support Jython script (Python JAVA), JavaBean, custom and other scripting language of the dynamic blocking modification.
 * Support SqlMap with JAVA interface and the JAVA abstract class mapping.The JAVA abstract class mapping in SqlMap mapping, join TemplateDAO encapsulation method for calling.
 * Support the integration of EhCache data cache, data cache framework.Can choose to use the framework itself cache mechanism or the third cache mechanism.The caching mechanism includes application level cache, thread cache level as well as the session level cache (WEB application support).
 
