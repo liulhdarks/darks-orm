@@ -4,6 +4,7 @@ Darks ORM
 Darks is a comprehensive type of lightweight ORM data persistence layer framework, integrated Hibernate "automation" ORM framework for the convenience, stability, as well as the Mybatis ORM framework "semi-automatic" efficient, high concurrency, set two ORM patterns as a whole.The framework to simplify the cumbersome configuration process, using Jython script language extensions, as a dynamic SQL language realization scheme.Construction of a highly efficient multi function domain data cache, and integrated EhCache third party data cache.
 
 Feature 1.0.3
+----------------
 * Support Javascript sqlmap aspect script.
 * Support if,elseif,else,where,set,trim,foreach nested tags for sqlmap DML.
 * Support logic expression for condition tags.
