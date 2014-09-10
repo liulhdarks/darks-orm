@@ -206,7 +206,7 @@ public class ByteHelper
         EntityData data = ClassFactory.getEntity(c.getName());
         if (!data.isUseProxy())
             return obj;
-        Class<T> cls = data.getClassProxy();
+        Class<T> cls = (Class<T>)data.getClassProxy();
         if (cls == null)
             return null;
         T n = ProxyBeanFactory.getProxyEntity(cls);

@@ -378,10 +378,10 @@ public class TransformFactory
             EntityData entityData = ClassFactory.parseClass(c);
             if (entityData == null)
                 return null;
-            c = entityData.getClassProxy();
-            T n = entityData.newInstance();
+            c = (Class<T>)entityData.getClassProxy();
+            Object entity = entityData.newInstance();
             
-            if (n == null)
+            if (entity == null)
                 return null;
             
             // 解析结果集所有列
@@ -419,7 +419,7 @@ public class TransformFactory
                         Class<?> fc = fdata.getFkClass();
                         // 递归转换外键实体对象
                         Object obj = this.ResultToEntityDataType(fc, sql, rs, false, false, alias);
-                        fdata.setValue(n, obj);
+                        fdata.setValue(entity, obj);
                     }
                     else
                     {
@@ -431,7 +431,7 @@ public class TransformFactory
                         }
                         String fname = fdata.getFkSetMethod();
                         FastMethod fm = ReflectHelper.parseFastMethod(c, fname, fpkdata.getFieldClass());
-                        fm.invoke(n, new Object[] {obj});
+                        fm.invoke(entity, new Object[] {obj});
                     }
                     continue;
                 }
@@ -441,10 +441,10 @@ public class TransformFactory
                 {
                     obj = 0;
                 }
-                fdata.setValue(n, obj);
+                fdata.setValue(entity, obj);
                 
             }
-            return n;
+            return (T)entity;
         }
         return null;
     }
@@ -733,7 +733,7 @@ public class TransformFactory
         if (!rs.isAfterLast() && !rs.isBeforeFirst())
         {
             c = (Class<T>)ClassFactory.getClass(c.getName());
-            T n = entityData.newInstance();
+            Object entity = entityData.newInstance();
             // -------
             Map<String, Integer> colsIndexMap = cacheSqlColumnIndex(rs, sql);
             // --------
@@ -777,21 +777,21 @@ public class TransformFactory
                     }
                     String fname = fdata.getFkSetMethod();
                     FastMethod fm = ReflectHelper.parseFastMethod(c, fname, fpkdata.getFieldClass());
-                    fm.invoke(n, new Object[] {obj});
+                    fm.invoke(entity, new Object[] {obj});
                     // -------------------
                     String check = fdata.getFieldName(alias);
                     if (map.containsKey(check))
                     {
                         Class<?> fc = fdata.getFkClass();
                         obj = cascadeResultToBean(fc, sql, rs, map, false, fdata.getFieldName(alias));
-                        fdata.setValue(n, obj);
+                        fdata.setValue(entity, obj);
                     }
                     continue;
                 }
                 Object obj = ReflectHelper.getResultSetValue(rs, fdata.getFieldClass(), key);
-                fdata.setValue(n, obj);
+                fdata.setValue(entity, obj);
             }
-            return n;
+            return (T)entity;
         }
         return null;
     }

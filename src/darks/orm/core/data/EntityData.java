@@ -49,10 +49,10 @@ public class EntityData implements Serializable
     private String schema;
     
     // 实体类
-    private Class classOrignal;
+    private Class<?> classOrignal;
     
     // 实体代理类
-    private Class classProxy;
+    private Class<?> classProxy;
     
     // 主键字段
     private FieldData pkField;
@@ -79,7 +79,7 @@ public class EntityData implements Serializable
         mapMethods = new ConcurrentHashMap<String, MethodData>();
     }
     
-    public EntityData(String tableName, String className, String schema, Class classOrignal, Class classProxy)
+    public EntityData(String tableName, String className, String schema, Class<?> classOrignal, Class<?> classProxy)
     {
         super();
         this.tableName = tableName;
@@ -232,7 +232,7 @@ public class EntityData implements Serializable
     
     public <T> T newInstance()
     {
-        Class<T> c = getClassProxy();
+        Class<T> c = (Class<T>)getClassProxy();
         T n = null;
         if (isUseProxy())
         {
@@ -275,12 +275,12 @@ public class EntityData implements Serializable
         this.schema = schema;
     }
     
-    public Class getClassOrignal()
+    public Class<?> getClassOrignal()
     {
         return classOrignal;
     }
     
-    public void setClassOrignal(Class classOrignal)
+    public void setClassOrignal(Class<?> classOrignal)
     {
         this.classOrignal = classOrignal;
     }
@@ -295,12 +295,12 @@ public class EntityData implements Serializable
         this.tableName = tableName;
     }
     
-    public Class getClassProxy()
+    public Class<?> getClassProxy()
     {
         return classProxy;
     }
     
-    public void setClassProxy(Class classProxy)
+    public void setClassProxy(Class<?> classProxy)
     {
         this.classProxy = classProxy;
     }

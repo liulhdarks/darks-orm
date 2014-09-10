@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<darks  xmlns="http://www.darks.org/schema/darks"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://www.darks.org/schema/darks darks.xsd">
+<!DOCTYPE darks PUBLIC "-//darks//DTD darks 3.0//EN" "darks.dtd">
+<darks>
 	
 	<!-- 配置JDBC数据源 -->
     <dataSource type="jdbc" id="jdbc" main="true">
@@ -41,24 +40,14 @@
     	<property name="jndiPoolName" value="java:comp/env/jdbc/course"></property>
     	<resultSet type="scroll" sensitive="false" concurrency="read"></resultSet>
     </dataSource>
- 	
- 	<!-- 日志配置 -->
-    <logger>
-    	<!-- 控制台显示执行的SQL语句 -->
-    	<showSql>true</showSql>
-    	<!-- 显示日志输出 -->
-    	<showLog>true</showLog>
-    	<!-- 将日志写入文件 -->
-    	<writeLog>false</writeLog>
-    </logger>
     
     <useThreadLocal use="true"></useThreadLocal>
     
     <!-- 实体类配置 -->
-    <entitys>
+    <entities>
 		<entity alias="User" class="darks.orm.test.model.User"></entity>
 		<entity alias="Depart" class="darks.orm.test.model.Depart"></entity>
-	</entitys>
+	</entities>
 	
 	<!-- 缓存配置  -->
 	<cacheGroup use="false" type="auto" cacheId="application" synchronous="true">
