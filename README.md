@@ -246,6 +246,23 @@ public abstract class UserMapper extends TemplateDAO
 }
 </pre>
 
+### Call Mapper
+
+#### API Way
+
+<pre>
+SqlSession session = SqlSessionFactory.getSession();
+UserMapper userMapper = session.getSqlMap(UserMapper.class);
+...
+</pre>
+
+#### Spring Way
+
+<pre>
+@Resource
+UserMapper userMapper;
+...
+</pre>
 
 ### Sqlmap File
 
