@@ -19,7 +19,7 @@ import darks.orm.exceptions.DataSourceException;
 
 public class SpringConnectionFactoryTest
 {
-    
+
     @Test
     public void getConnectionDoesNotFallBackWhenSpringDataSourceFails()
     {
@@ -27,7 +27,7 @@ public class SpringConnectionFactoryTest
         factory.setDataSourceConfig(new SpringDataSourceConfiguration(failingDataSource()));
         FallbackHandler fallback = new FallbackHandler();
         factory.setHandler(fallback);
-        
+
         try
         {
             factory.getConnection();
@@ -38,7 +38,7 @@ public class SpringConnectionFactoryTest
             assertFalse(fallback.called);
         }
     }
-    
+
     private DataSource failingDataSource()
     {
         return (DataSource)Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {DataSource.class},
@@ -67,11 +67,11 @@ public class SpringConnectionFactoryTest
                 }
             });
     }
-    
+
     private static class FallbackHandler extends ConnectionHandler
     {
         boolean called;
-        
+
         @Override
         public Connection getConnection()
         {
