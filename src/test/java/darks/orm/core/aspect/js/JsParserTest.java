@@ -16,17 +16,17 @@ import darks.orm.exceptions.JsAspectException;
 
 public class JsParserTest
 {
-    
+
     @Test
     public void parseFailsClosedWhenJavascriptMethodIsMissing()
     {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
         Assume.assumeTrue(engine instanceof Invocable);
-        
+
         AspectData aspectData = new AspectData();
         aspectData.setAspectType(AspectType.JAVASCRIPT);
         aspectData.setContent("function after(wrapper) { return true; }");
-        
+
         try
         {
             new JsParser().parse(aspectData, new SimpleAspectWrapper(), null, "before");

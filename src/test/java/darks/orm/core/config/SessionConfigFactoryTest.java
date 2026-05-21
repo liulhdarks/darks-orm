@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class SessionConfigFactoryTest
 {
-    
+
     @Test
     public void getConfigurationAcceptsLegacyEntitysElement()
         throws Exception
@@ -24,10 +24,10 @@ public class SessionConfigFactoryTest
                 + "<entity alias=\"StringAlias\" class=\"java.lang.String\"/>"
                 + "</entitys>"
                 + "</darks>";
-        
+
         Configuration configuration =
             SessionConfigFactory.getConfiguration(new ByteArrayInputStream(xml.getBytes("UTF-8")));
-        
+
         assertSame(String.class, configuration.getEntityConfig().getEntity("StringAlias"));
     }
 }
