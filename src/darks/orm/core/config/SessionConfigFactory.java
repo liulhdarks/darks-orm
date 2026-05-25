@@ -239,8 +239,11 @@ public final class SessionConfigFactory
         throws ConfigException
     {
         EntityConfiguration entityConfig = cfg.getEntityConfig();
-        String xpath = "/darks/entities";
-        Element node = (Element)doc.selectSingleNode(xpath);
+        Element node = (Element)doc.selectSingleNode("/darks/entities");
+        if (node == null)
+        {
+            node = (Element)doc.selectSingleNode("/darks/entitys");
+        }
         if (node == null)
             return;
         List<?> nodes = node.selectNodes("entity[@class]");
