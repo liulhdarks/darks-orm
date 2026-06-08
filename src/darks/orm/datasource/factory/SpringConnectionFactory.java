@@ -62,8 +62,7 @@ public class SpringConnectionFactory extends ConnectionHandler
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            return super.getConnection();
+            throw new DataSourceException("Spring datasource getConnection failed", e);
         }
     }
 }
