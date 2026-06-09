@@ -18,13 +18,11 @@
 package darks.orm.core.interceptor;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import darks.orm.annotation.sqlmap.Select;
 import darks.orm.annotation.sqlmap.Update;
-import darks.orm.app.Page;
 import darks.orm.app.QueryEnumType;
 import darks.orm.app.SqlSession;
 import darks.orm.core.data.xml.DMLData;
@@ -201,18 +199,6 @@ public class SqlMapInterceptor implements MethodInterceptor
     
     private QueryEnumType parseAutoQueryType(Method method)
     {
-    	Class<?> clazz = method.getReturnType();
-    	if (clazz.isAssignableFrom(Collection.class))
-    	{
-    		return QueryEnumType.List;
-    	}
-    	else if (clazz.isAssignableFrom(Page.class))
-    	{
-    		return QueryEnumType.Page;
-    	}
-    	else
-    	{
-    		return QueryEnumType.Object;
-    	}
+        return SqlMapQueryTypeResolver.parseAutoQueryType(method);
     }
 }
