@@ -202,11 +202,11 @@ public class SqlMapInterceptor implements MethodInterceptor
     private QueryEnumType parseAutoQueryType(Method method)
     {
     	Class<?> clazz = method.getReturnType();
-    	if (clazz.isAssignableFrom(Collection.class))
+    	if (Collection.class.isAssignableFrom(clazz))
     	{
     		return QueryEnumType.List;
     	}
-    	else if (clazz.isAssignableFrom(Page.class))
+    	else if (Page.class.isAssignableFrom(clazz))
     	{
     		return QueryEnumType.Page;
     	}
