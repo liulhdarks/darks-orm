@@ -1,4 +1,4 @@
-package darks.orm.test;
+package darks.orm.core.interceptor;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -9,21 +9,19 @@ import org.junit.Test;
 
 import darks.orm.app.Page;
 import darks.orm.app.QueryEnumType;
-import darks.orm.core.interceptor.SqlMapInterceptor;
-import darks.orm.test.model.User;
 
-public class SqlMapInterceptorTest
+public class SqlMapQueryTypeResolverTest
 {
     
     interface Mapper
     {
-        List<User> listUsers();
+        List<String> listUsers();
         
-        Collection<User> collectionUsers();
+        Collection<String> collectionUsers();
         
-        Page<User> pageUsers();
+        Page<String> pageUsers();
         
-        User singleUser();
+        String singleUser();
     }
     
     @Test
@@ -51,9 +49,7 @@ public class SqlMapInterceptorTest
     private QueryEnumType parseAutoQueryType(String mapperMethodName)
         throws Exception
     {
-        Method parser = SqlMapInterceptor.class.getDeclaredMethod("parseAutoQueryType", Method.class);
-        parser.setAccessible(true);
         Method mapperMethod = Mapper.class.getDeclaredMethod(mapperMethodName);
-        return (QueryEnumType)parser.invoke(new SqlMapInterceptor(), mapperMethod);
+        return SqlMapQueryTypeResolver.parseAutoQueryType(mapperMethod);
     }
 }
