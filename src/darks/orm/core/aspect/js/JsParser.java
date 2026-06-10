@@ -96,8 +96,7 @@ public class JsParser
         }
         catch (NoSuchMethodException e)
         {
-        	log.warn("Fail to execute JS method " + methodType + "." + e.getMessage());
-            return true;
+            throw new JsAspectException("Fail to execute JS method " + methodType + "." + e.getMessage(), e);
         }
         catch (Exception e)
         {
