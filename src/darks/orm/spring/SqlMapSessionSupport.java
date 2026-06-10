@@ -27,18 +27,21 @@ public abstract class SqlMapSessionSupport
     
     public SqlMapSessionSupport()
     {
-        try
-        {
-            session = SqlSessionFactory.getSession();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
     
     public SqlSession getSession()
     {
+        if (session == null)
+        {
+            try
+            {
+                session = SqlSessionFactory.getSession();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
         return session;
     }
 }
