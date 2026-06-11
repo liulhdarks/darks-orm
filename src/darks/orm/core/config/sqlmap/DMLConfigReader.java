@@ -29,6 +29,7 @@ import darks.orm.core.aspect.jython.PythonBuilder;
 import darks.orm.core.data.tags.AbstractTag;
 import darks.orm.core.data.tags.RootTag;
 import darks.orm.core.data.tags.TagsFactory;
+import darks.orm.core.data.tags.impl.IncludeTag;
 import darks.orm.core.data.tags.impl.TextTag;
 import darks.orm.core.data.xml.AspectData;
 import darks.orm.core.data.xml.AspectData.AspectType;
@@ -486,12 +487,9 @@ public class DMLConfigReader
 			{
 				id = namesp + id;
 			}
-			AbstractTag externTag = sqlMapConfig.getTag(id); 
-			if (externTag != null)
-			{
-				prevTag = externTag;
-				parent.addChild(externTag);
-			}
+			IncludeTag includeTag = new IncludeTag(id, sqlMapConfig, prevTag);
+			prevTag = includeTag;
+			parent.addChild(includeTag);
 		}
 		else
 		{

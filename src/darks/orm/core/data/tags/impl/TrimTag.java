@@ -62,9 +62,9 @@ public class TrimTag extends AbstractTag
 	            	if ("".equals(override))
 	            		continue;
 	                override = override.trim();
-	                if (strTmp.toLowerCase().startsWith(override.toLowerCase()))
+	                if (matchesPrefixOverride(strTmp, override))
 	                {
-	                	strTmp = strTmp.substring(override.length());
+	                	strTmp = strTmp.substring(override.length()).trim();
 	                }
 	            }
 			}
@@ -76,11 +76,15 @@ public class TrimTag extends AbstractTag
 	            	if ("".equals(override))
 	            		continue;
                     override = override.trim();
-                    if (strTmp.toLowerCase().endsWith(override.toLowerCase()))
+                    if (matchesSuffixOverride(strTmp, override))
                     {
-                    	strTmp = strTmp.substring(0, strTmp.length() - override.length());
+                    	strTmp = strTmp.substring(0, strTmp.length() - override.length()).trim();
                     }
                 }
+			}
+			if (strTmp.length() == 0)
+			{
+				return null;
 			}
 			if (prefix != null && !"".equals(prefix))
 			{
@@ -103,6 +107,61 @@ public class TrimTag extends AbstractTag
 		suffix = el.attributeValue("suffix").trim();
 		suffixOverrides = el.attributeValue("suffixOverrides").trim();
 		return true;
+	}
+
+	private boolean matchesPrefixOverride(String sql, String override)
+	{
+		if (!startsWithIgnoreCase(sql, override))
+		{
+			return false;
+		}
+		if (isIdentifierOverride(override) && sql.length() > override.length())
+		{
+			return !isSqlIdentifierChar(sql.charAt(override.length()));
+		}
+		return true;
+	}
+
+	private boolean matchesSuffixOverride(String sql, String override)
+	{
+		if (!endsWithIgnoreCase(sql, override))
+		{
+			return false;
+		}
+		int start = sql.length() - override.length();
+		if (isIdentifierOverride(override) && start > 0)
+		{
+			return !isSqlIdentifierChar(sql.charAt(start - 1));
+		}
+		return true;
+	}
+
+	private boolean startsWithIgnoreCase(String sql, String override)
+	{
+		return sql.length() >= override.length() && sql.regionMatches(true, 0, override, 0, override.length());
+	}
+
+	private boolean endsWithIgnoreCase(String sql, String override)
+	{
+		int start = sql.length() - override.length();
+		return start >= 0 && sql.regionMatches(true, start, override, 0, override.length());
+	}
+
+	private boolean isIdentifierOverride(String override)
+	{
+		for (int i = 0; i < override.length(); i++)
+		{
+			if (!isSqlIdentifierChar(override.charAt(i)))
+			{
+				return false;
+			}
+		}
+		return override.length() > 0;
+	}
+
+	private boolean isSqlIdentifierChar(char ch)
+	{
+		return Character.isLetterOrDigit(ch) || ch == '_';
 	}
 
 	public String getPrefix()
