@@ -64,7 +64,7 @@ public class TrimTag extends AbstractTag
 	                override = override.trim();
 	                if (matchesPrefixOverride(strTmp, override))
 	                {
-	                	strTmp = strTmp.substring(override.length()).trim();
+	                strTmp = strTmp.substring(override.length()).trim();
 	                }
 	            }
 			}
@@ -78,7 +78,7 @@ public class TrimTag extends AbstractTag
                     override = override.trim();
                     if (matchesSuffixOverride(strTmp, override))
                     {
-                    	strTmp = strTmp.substring(0, strTmp.length() - override.length()).trim();
+                    strTmp = strTmp.substring(0, strTmp.length() - override.length()).trim();
                     }
                 }
 			}
