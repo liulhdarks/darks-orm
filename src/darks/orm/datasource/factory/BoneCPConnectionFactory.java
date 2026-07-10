@@ -73,8 +73,7 @@ public class BoneCPConnectionFactory extends ConnectionHandler
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            return super.getConnection();
+            throw new DataSourceException("Failed to get BoneCP connection.", e);
         }
     }
 }

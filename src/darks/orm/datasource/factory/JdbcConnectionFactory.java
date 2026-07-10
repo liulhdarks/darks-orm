@@ -62,8 +62,7 @@ public class JdbcConnectionFactory extends ConnectionHandler
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            return super.getConnection();
+            throw new DataSourceException("Failed to get JDBC connection.", e);
         }
     }
 }

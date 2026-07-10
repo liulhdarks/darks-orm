@@ -25,6 +25,7 @@ import darks.orm.core.config.DataSourceConfiguration;
 import darks.orm.core.config.SpringDataParamConfig;
 import darks.orm.core.config.SpringDataSourceConfiguration;
 import darks.orm.datasource.ConnectionHandler;
+import darks.orm.exceptions.DataSourceException;
 
 public class DataSourceFactory extends ConnectionHandler
 {
@@ -70,8 +71,7 @@ public class DataSourceFactory extends ConnectionHandler
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            return super.getConnection();
+            throw new DataSourceException("Failed to get configured data source connection.", e);
         }
     }
     

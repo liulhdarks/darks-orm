@@ -242,6 +242,10 @@ public final class SessionConfigFactory
         String xpath = "/darks/entities";
         Element node = (Element)doc.selectSingleNode(xpath);
         if (node == null)
+        {
+            node = (Element)doc.selectSingleNode("/darks/entitys");
+        }
+        if (node == null)
             return;
         List<?> nodes = node.selectNodes("entity[@class]");
         Iterator<?> it = nodes.iterator();
