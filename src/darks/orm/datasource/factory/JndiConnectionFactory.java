@@ -65,8 +65,7 @@ public class JndiConnectionFactory extends ConnectionHandler
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            return super.getConnection();
+            throw new DataSourceException("Failed to get JNDI connection.", e);
         }
     }
 }

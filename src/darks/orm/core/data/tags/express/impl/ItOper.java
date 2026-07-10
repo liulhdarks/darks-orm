@@ -28,9 +28,9 @@ public class ItOper extends CompareOper
 	@Override
 	public Boolean compute(String src, String desc)
 	{
-		if (src == null)
+		if (src == null || desc == null)
 		{
-			return desc == null;
+			return false;
 		}
 		else
 		{
@@ -53,9 +53,9 @@ public class ItOper extends CompareOper
 	@Override
 	public Boolean compute(Object src, Object desc)
 	{
-		if (src == null)
+		if (src == null || desc == null)
 		{
-			return desc == null;
+			return false;
 		}
 		else
 		{
