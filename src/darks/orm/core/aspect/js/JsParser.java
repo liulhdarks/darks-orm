@@ -35,8 +35,6 @@ import darks.orm.core.data.xml.QueryAspectWrapper;
 import darks.orm.core.data.xml.SimpleAspectWrapper;
 import darks.orm.exceptions.AspectException;
 import darks.orm.exceptions.JsAspectException;
-import darks.orm.log.Logger;
-import darks.orm.log.LoggerFactory;
 
 /**
  * It is used to parse javascript in sqlmap.
@@ -53,8 +51,6 @@ public class JsParser
 {
     private static ScriptEngineManager manager;
     
-    private static Logger log = LoggerFactory.getLogger(JsParser.class);
-    
     static
     {
         manager = new ScriptEngineManager();
@@ -65,8 +61,16 @@ public class JsParser
     {
         if (aspectData == null)
             return true;
+        if (aspectData.getAspectType() != AspectType.JAVASCRIPT && aspectData.getAspectType() != AspectType.JSFILE)
+        {
+            return true;
+        }
         
         ScriptEngine engine = manager.getEngineByName("JavaScript");
+        if (!(engine instanceof Invocable))
+        {
+            throw new JsAspectException("JavaScript engine is unavailable or not invocable.");
+        }
         Invocable invoker = (Invocable)engine;
         Object retObj = null;
         try
@@ -78,10 +82,6 @@ public class JsParser
             else if (aspectData.getAspectType() == AspectType.JSFILE)
             {
                 engine.eval(getJsFileReader(aspectData.getContent()));
-            }
-            else
-            {
-                return true;
             }
             
             if (simpleWrapper instanceof QueryAspectWrapper)
@@ -96,8 +96,7 @@ public class JsParser
         }
         catch (NoSuchMethodException e)
         {
-        	log.warn("Fail to execute JS method " + methodType + "." + e.getMessage());
-            return true;
+            throw new JsAspectException("Fail to execute JS method " + methodType + "." + e.getMessage(), e);
         }
         catch (Exception e)
         {
