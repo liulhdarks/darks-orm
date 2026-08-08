@@ -32,7 +32,6 @@ import darks.orm.exceptions.PersistenceException;
 import darks.orm.exceptions.SessionException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
-import darks.orm.util.DataTypeHelper;
 
 /**
  * Build SQL for persist entity such as insert and update
@@ -180,10 +179,12 @@ public abstract class PersistSqlBuilder
                 continue;
             }
             
-            if (!fdata.isNullable() || isNullable == true)
+            // Skip only true nulls. checkValueIsNull() treats <= 0 as null for PK
+            // auto-generation and must not be reused here, or legitimate zero /
+            // negative field values are silently omitted from UPDATE SET clauses.
+            if ((!fdata.isNullable() || isNullable) && o == null)
             {
-                if (DataTypeHelper.checkValueIsNull(fdata.getFieldClass(), o))
-                    continue;
+                continue;
             }
             
             if (o != null)
