@@ -161,7 +161,10 @@ public class ByteHelper
         throws Exception
     {
         EntityData data = ClassFactory.getEntity(c.getName());
-        Object n = ReflectHelper.newInstance(data.getClassProxy());
+        // Must materialize the original entity type for cache serialization.
+        // Using classProxy here re-wraps a CGLIB proxy and corrupts FieldCopyStrategy writes.
+        Class<?> originalClass = data.getClassOrignal() != null ? data.getClassOrignal() : c;
+        Object n = ReflectHelper.newInstance(originalClass);
         Field[] fs1 = n.getClass().getDeclaredFields();
         Field[] fs2 = c.getDeclaredFields();
         for (Field f : fs1)

@@ -28,6 +28,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -540,13 +541,18 @@ public final class ReflectHelper
 			try
 			{
 				m = rsClass.getMethod(jdbcmt, new Class[] { int.class });
-				return m.invoke(rs, colnumIndex);
+				Object value = m.invoke(rs, colnumIndex);
+				return normalizeResultSetValue(rs, javaType, value);
 			}
 			catch (NoSuchMethodException e)
 			{
 				throw new ClassReflectException(
 						"ReflectHelper::getResultSetValue happen NoSuchMethodException "
 								+ e.toString(), e);
+			}
+			catch (ClassReflectException e)
+			{
+				throw e;
 			}
 			catch (Exception e)
 			{
@@ -557,7 +563,8 @@ public final class ReflectHelper
 		}
 		try
 		{
-			return method.invoke(rs, new Object[] { colnumIndex });
+			Object value = method.invoke(rs, new Object[] { colnumIndex });
+			return normalizeResultSetValue(rs, javaType, value);
 		}
 		catch (InvocationTargetException e)
 		{
@@ -585,9 +592,37 @@ public final class ReflectHelper
 		{
 			Class<?> rsClass = rs.getClass();
 			Method m = rsClass.getMethod(jdbcmt, new Class[] { String.class });
-			return m.invoke(rs, colnumName);
+			Object value = m.invoke(rs, colnumName);
+			return normalizeResultSetValue(rs, javaType, value);
 		}
-		return method.invoke(rs, new Object[] { colnumName });
+		Object value = method.invoke(rs, new Object[] { colnumName });
+		return normalizeResultSetValue(rs, javaType, value);
+	}
+
+	/**
+	 * Primitive JDBC getters (getInt/getLong/getBoolean/...) return default
+	 * values for SQL NULL. For wrapper field types, honor ResultSet.wasNull()
+	 * so NULL is not silently coerced to 0/false.
+	 */
+	private static Object normalizeResultSetValue(ResultSet rs, Class<?> javaType, Object value)
+			throws ClassReflectException
+	{
+		if (javaType != null && !javaType.isPrimitive())
+		{
+			try
+			{
+				if (rs.wasNull())
+				{
+					return null;
+				}
+			}
+			catch (SQLException e)
+			{
+				throw new ClassReflectException(
+						"ReflectHelper::getResultSetValue happen SQLException " + e.toString(), e);
+			}
+		}
+		return value;
 	}
 
 	public static Field getAllField(Class<?> clazz, String fieldName)
