@@ -62,6 +62,13 @@ public class GenericTransaction implements Transaction
             if (conn == null || conn.isClosed())
             {
                 conn = ConnectionFactory.getInstance().getConnection();
+                if (dsc != null)
+                {
+                    // Reapply the session autoCommit mode to the replacement
+                    // connection; otherwise writes may stay uncommitted when
+                    // executeUpdate skips commit based on the stale field.
+                    conn.setAutoCommit(autoCommit);
+                }
             }
         }
         catch (SQLException e)
