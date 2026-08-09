@@ -13,7 +13,7 @@ public class LongIdEntity implements Serializable
 
     private static final long serialVersionUID = 1L;
 
-    @Id(type = GenerateKeyType.ASSIGNED)
+    @Id(type = GenerateKeyType.AUTO)
     @Column("id")
     private Long id;
 

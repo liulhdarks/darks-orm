@@ -30,13 +30,13 @@ public class ForTagTest
         StringBuilder sql = new StringBuilder("select * from t where id in ");
         tag.computeSql(sql, params, data, null);
 
-        String rendered = sql.toString();
-        assertTrue("foreach should keep open/close: " + rendered, rendered.contains("in ("));
+        String rendered = sql.toString().replace(" ", "");
+        assertTrue("foreach should keep open/close: " + rendered, rendered.contains("in("));
         assertTrue("foreach should close the IN list: " + rendered, rendered.contains(")"));
         assertFalse("multi-char separator must not leave a trailing comma: " + rendered,
             rendered.contains(",)"));
-        assertFalse("multi-char separator must not leave ', )': " + rendered, rendered.contains(", )"));
-        assertEquals("select * from t where id in (#id0,#id1,#id2) ", rendered.replace(" ", ""));
+        // collection occupies params[0], so generated aliases begin at #id1
+        assertEquals("select*fromtwhereidin(#id1,#id2,#id3)", rendered);
     }
 
     @Test
