@@ -223,6 +223,19 @@ public abstract class PersistSqlBuilder
     public static <T> String buildDeleteSql(Class<T> c, int id)
         throws SessionException
     {
+        return buildDeleteSql(c);
+    }
+    
+    /**
+     * Build delete-by-primary-key SQL. The bound primary-key value is supplied
+     * separately as a JDBC parameter.
+     *
+     * @param c entity class
+     * @return delete SQL with a single {@code ?} placeholder
+     */
+    public static <T> String buildDeleteSql(Class<T> c)
+        throws SessionException
+    {
         
         StringBuffer buf = new StringBuffer(256);
         String tn = ClassFactory.getTableName(c);

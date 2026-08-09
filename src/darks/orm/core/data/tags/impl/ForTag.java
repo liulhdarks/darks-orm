@@ -18,6 +18,7 @@
 package darks.orm.core.data.tags.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.dom4j.Element;
@@ -56,6 +57,10 @@ public class ForTag extends AbstractTag
 		ExpressParam expParam = new ExpressParam(params, data);
 		@SuppressWarnings("unchecked")
 		Collection<Object> col = (Collection<Object>)expParam.getParam(collection);
+		if (col == null)
+		{
+			col = Collections.emptyList();
+		}
 		int i = params.size();
 		sqlBuf.append(open);
 		for (Object obj : col)
@@ -71,9 +76,9 @@ public class ForTag extends AbstractTag
 			sqlBuf.append(key).append(separator);
 			i++;
 		}
-		if (!col.isEmpty())
+		if (!col.isEmpty() && separator != null && separator.length() > 0)
 		{
-			sqlBuf.setLength(sqlBuf.length() - 1);
+			sqlBuf.setLength(sqlBuf.length() - separator.length());
 		}
 		sqlBuf.append(close).append(' ');
 		return null;

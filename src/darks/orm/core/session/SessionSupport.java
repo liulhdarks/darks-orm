@@ -704,8 +704,8 @@ public abstract class SessionSupport implements Serializable, SqlSession
         }
         if (c != null)
         {
-            int val = (Integer)ClassFactory.getPrimaryKeyValue(c, entity);
-            delete(c, val);
+            Object val = ClassFactory.getPrimaryKeyValue(c, entity);
+            deleteByPrimaryKey(c, val);
         }
     }
     
@@ -714,12 +714,16 @@ public abstract class SessionSupport implements Serializable, SqlSession
      */
     public <T> void delete(Class<T> c, int id)
     {
+        deleteByPrimaryKey(c, id);
+    }
+    
+    private <T> void deleteByPrimaryKey(Class<T> c, Object id)
+    {
         initialize();
         String sql = deleteMap.get(c.getName());
-        ;
         if (sql == null)
         {
-            sql = PersistSqlBuilder.buildDeleteSql(c, id);
+            sql = PersistSqlBuilder.buildDeleteSql(c);
             if (sql == null)
                 return;
             deleteMap.put(c.getName(), sql);
@@ -810,29 +814,25 @@ public abstract class SessionSupport implements Serializable, SqlSession
                 }
             }
             pstmt.executeUpdate();
+            Object autoIncKeyFromApi = -1;
+            ResultSet rs = null;
+            try
+            {
+                rs = pstmt.getGeneratedKeys();
+                if (rs != null && rs.next())
+                {
+                    autoIncKeyFromApi = rs.getObject(1);
+                }
+            }
+            finally
+            {
+                JdbcHelper.closeResultSet(rs);
+            }
             if (isAutoCommit)
             {
                 tx.commit();
-                Object autoIncKeyFromApi = -1;
-                ResultSet rs = null;
-                try
-                {
-                    rs = pstmt.getGeneratedKeys();
-                    if (rs != null && rs.next())
-                    {
-                        autoIncKeyFromApi = rs.getObject(1);
-                    }
-                }
-                finally
-                {
-                    JdbcHelper.closeResultSet(rs);
-                }
-                return autoIncKeyFromApi;
             }
-            else
-            {
-                return 0;
-            }
+            return autoIncKeyFromApi;
         }
         catch (SQLException ex)
         {
@@ -965,21 +965,23 @@ public abstract class SessionSupport implements Serializable, SqlSession
             }
             pstmt.execute();
             Object autoIncKeyFromApi = null;
-            if (pstmt.execute(keysql))
+            PreparedStatement keyStmt = null;
+            ResultSet rs = null;
+            try
             {
-                ResultSet rs = null;
-                try
+                // Key feedback must use a separate statement; executing a new
+                // SQL string on the INSERT PreparedStatement is invalid on many drivers.
+                keyStmt = tx.getPreparedStatement(keysql, StatementType.Normal);
+                rs = keyStmt.executeQuery();
+                if (rs != null && rs.next())
                 {
-                    rs = pstmt.getResultSet();
-                    if (rs != null && rs.next())
-                    {
-                        autoIncKeyFromApi = ReflectHelper.getResultSetValue(rs, keyClass, 1);
-                    }
+                    autoIncKeyFromApi = ReflectHelper.getResultSetValue(rs, keyClass, 1);
                 }
-                finally
-                {
-                    JdbcHelper.closeResultSet(rs);
-                }
+            }
+            finally
+            {
+                JdbcHelper.closeResultSet(rs);
+                JdbcHelper.closeStatement(keyStmt);
             }
             if (isAutoCommit)
             {
