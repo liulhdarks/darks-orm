@@ -65,16 +65,19 @@ public class CacheObjectUpdater
                         ConcurrentMap<String, FieldData> fmap = fedata.getMapNameFields();
                         for (FieldData fkdata : fmap.values())
                         {
-                            Object fkoldobj = fkdata.getValue(oldobj);
-                            Object fknewobj = fkdata.getValue(newobj);
+                            // Merge fields on the FK child instances, not the parent entity.
+                            Object fkoldobj = fkdata.getValue(foldobj);
+                            Object fknewobj = fkdata.getValue(fnewobj);
                             if (fkoldobj == null || !fkoldobj.equals(fknewobj))
                             {
-                                fkdata.setValue(oldobj, fknewobj);
+                                fkdata.setValue(foldobj, fknewobj);
                             }
                         }
                     }
                 }
             }
+            // Persist merged state for copy strategies that return detached copies.
+            oldcache.setObject(oldobj);
         }
         catch (Exception e)
         {
