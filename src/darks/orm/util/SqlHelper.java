@@ -260,7 +260,9 @@ public class SqlHelper
                     arg = ReflectHelper.getFieldValue(field, arg);
                     if (arg == null)
                     {
-                    	throw new SQLException("buildSqlParams fail to get value in " + clazz);
+                        // Nested path may legally be null (optional association).
+                        // Bind NULL instead of failing the whole statement.
+                        break;
                     }
                 }
                 cur = cur.next();

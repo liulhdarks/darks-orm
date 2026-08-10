@@ -56,7 +56,17 @@ public class StatementFactory
     
     public void removePreparedStatement(String sql)
     {
+        // Remove all statement-type variants for this SQL text.
+        for (StatementType type : StatementType.values())
+        {
+            mapPS.remove(statementCacheKey(sql, type));
+        }
         mapPS.remove(sql);
+    }
+    
+    private static String statementCacheKey(String sql, StatementType stateType)
+    {
+        return stateType.name() + '\0' + sql;
     }
     
     public void removeCallableStatement(String sql)
@@ -145,20 +155,21 @@ public class StatementFactory
     private PreparedStatement getPrepareStatementGenerateKey(String sql, ProxyConnection conn)
         throws SQLException
     {
-        PreparedStatement pstmt = mapPS.get(sql);
+        String cacheKey = statementCacheKey(sql, StatementType.GenerateKey);
+        PreparedStatement pstmt = mapPS.get(cacheKey);
         if (pstmt != null)
         {
             if (pstmt.isClosed())
             {
-                mapPS.remove(sql);
+                mapPS.remove(cacheKey);
                 pstmt = getPrepareStatementByType(sql, conn, StatementType.GenerateKey);
-                mapPS.put(sql, pstmt);
+                mapPS.put(cacheKey, pstmt);
             }
         }
         else
         {
             pstmt = getPrepareStatementByType(sql, conn, StatementType.GenerateKey);
-            mapPS.put(sql, pstmt);
+            mapPS.put(cacheKey, pstmt);
         }
         return pstmt;
     }
@@ -174,20 +185,21 @@ public class StatementFactory
     private PreparedStatement getPrepareStatementScorllable(String sql, ProxyConnection conn)
         throws SQLException
     {
-        PreparedStatement pstmt = mapPS.get(sql);
+        String cacheKey = statementCacheKey(sql, StatementType.Scorllable);
+        PreparedStatement pstmt = mapPS.get(cacheKey);
         if (pstmt != null)
         {
             if (pstmt.isClosed())
             {
-                mapPS.remove(sql);
+                mapPS.remove(cacheKey);
                 pstmt = getPrepareStatementByType(sql, conn, StatementType.Scorllable);
-                mapPS.put(sql, pstmt);
+                mapPS.put(cacheKey, pstmt);
             }
         }
         else
         {
             pstmt = getPrepareStatementByType(sql, conn, StatementType.Scorllable);
-            mapPS.put(sql, pstmt);
+            mapPS.put(cacheKey, pstmt);
         }
         return pstmt;
     }
@@ -203,20 +215,21 @@ public class StatementFactory
     private PreparedStatement getPrepareStatementNormal(String sql, ProxyConnection conn)
         throws SQLException
     {
-        PreparedStatement pstmt = mapPS.get(sql);
+        String cacheKey = statementCacheKey(sql, StatementType.Normal);
+        PreparedStatement pstmt = mapPS.get(cacheKey);
         if (pstmt != null)
         {
             if (pstmt.isClosed())
             {
-                mapPS.remove(sql);
+                mapPS.remove(cacheKey);
                 pstmt = getPrepareStatementByType(sql, conn, StatementType.Normal);
-                mapPS.put(sql, pstmt);
+                mapPS.put(cacheKey, pstmt);
             }
         }
         else
         {
             pstmt = getPrepareStatementByType(sql, conn, StatementType.Normal);
-            mapPS.put(sql, pstmt);
+            mapPS.put(cacheKey, pstmt);
         }
         return pstmt;
     }
