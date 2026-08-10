@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import net.sf.cglib.reflect.FastMethod;
+
 import darks.orm.annotation.Entity;
 import darks.orm.annotation.Id.GenerateKeyType;
 import darks.orm.core.data.EntityData;
@@ -33,6 +35,7 @@ import darks.orm.exceptions.SessionException;
 import darks.orm.log.Logger;
 import darks.orm.log.LoggerFactory;
 import darks.orm.util.DataTypeHelper;
+import darks.orm.util.ReflectHelper;
 
 /**
  * Build SQL for persist entity such as insert and update
@@ -109,17 +112,14 @@ public abstract class PersistSqlBuilder
                 }
             }
             
+            if (fdata.getFieldFlag() == FieldFlag.FkEntity)
+            {
+                o = resolveForeignKeyValue(fdata, ent, o);
+            }
             if (fdata.isNullable())
             {
                 if (o == null)
                     continue;
-            }
-            if (o != null)
-            {
-                if (fdata.getFieldFlag() == FieldFlag.FkEntity)
-                {
-                    o = ClassFactory.getPrimaryKeyValue(fdata.getFkClass(), o);
-                }
             }
             list.add(o);
             buf.append(key);
@@ -180,20 +180,17 @@ public abstract class PersistSqlBuilder
                 continue;
             }
             
+            if (fdata.getFieldFlag() == FieldFlag.FkEntity)
+            {
+                o = resolveForeignKeyValue(fdata, ent, o);
+            }
+            
             if (!fdata.isNullable() || isNullable == true)
             {
                 if (DataTypeHelper.checkValueIsNull(fdata.getFieldClass(), o))
                     continue;
             }
             
-            if (o != null)
-            {
-                if (fdata.getFieldFlag() == FieldFlag.FkEntity)
-                {
-                    Class<?> fclass = fdata.getFkClass();
-                    o = ClassFactory.getPrimaryKeyValue(fclass, o);
-                }
-            }
             list.add(o);
             buf.append(key);
             buf.append(" = ?,");
@@ -210,6 +207,42 @@ public abstract class PersistSqlBuilder
         ret.add(buf.toString());
         ret.add(objs);
         return ret;
+    }
+    
+    /**
+     * Resolve the FK column bind value from a loaded association, or from the
+     * generated hidden {@code fk_*} field when the association was not hydrated.
+     * Without this fallback, {@code update(entity)} after a non-join load writes
+     * NULL into nullable FK columns and silently clears relationships.
+     */
+    private static Object resolveForeignKeyValue(FieldData fdata, Object entity, Object association)
+        throws SessionException
+    {
+        if (association != null)
+        {
+            return ClassFactory.getPrimaryKeyValue(fdata.getFkClass(), association);
+        }
+        String getMethod = fdata.getFkGetMethod();
+        if (getMethod == null || fdata.getFkData() == null || fdata.getFkData().getPkField() == null)
+        {
+            return null;
+        }
+        try
+        {
+            EntityData entityData = ClassFactory.parseClass(entity.getClass());
+            Class<?> invokeClass = entityData != null && entityData.getClassProxy() != null
+                ? entityData.getClassProxy() : entity.getClass();
+            FastMethod fm = ReflectHelper.parseFastMethod(invokeClass, getMethod);
+            return fm.invoke(entity, new Object[0]);
+        }
+        catch (SessionException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
     
     /**
